@@ -1,19 +1,17 @@
 package check
 
-func A(err error) {
+func E(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
-func B[A any](a A, err error) A {
-	if err != nil {
-		panic(err)
-	}
+func E1[A any](a A, err error) A {
+	E(err)
 
 	return a
 }
 
 func Call(f func() error) {
-	A(f())
+	E(f())
 }
