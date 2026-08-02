@@ -3,6 +3,7 @@ package esp32c6
 import (
 	"github.com/temnok/esp32c6/check"
 	"go.bug.st/serial"
+	"runtime/debug"
 	"testing"
 	"time"
 )
@@ -10,19 +11,17 @@ import (
 func TestReset(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
-			t.Fatal(err)
+			t.Fatalf("%v\n%s", err, debug.Stack())
 		}
 	}()
 
-	port := check.B(serial.Open("/dev/ttyACM0", &serial.Mode{
-		BaudRate: 115200,
-	}))
+	port := check.B(serial.Open("/dev/ttyACM0", &serial.Mode{}))
 
-	defer check.Defer(port.Close)
+	defer check.Call(port.Close)
 
 	resetIntoDownloadMode(port)
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(100 * time.Millisecond)
 
 	resetIntoBootingFromFlash(port)
 }

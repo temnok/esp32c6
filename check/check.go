@@ -14,6 +14,6 @@ func B[A any](a A, err error) A {
 	return a
 }
 
-func Defer(f func() error) {
+func Call(f func() error) {
 	A(f())
 }
