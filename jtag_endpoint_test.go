@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestGetDescriptor(t *testing.T) {
+func TestJtagEndpoint(t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			t.Fatalf("%v\n%s", err, debug.Stack())
@@ -21,7 +21,7 @@ func TestGetDescriptor(t *testing.T) {
 	dev := check.E1(ctx.OpenDeviceWithVIDPID(0x303A, 0x1001)) // add udev rule if this fails
 	defer check.Call(dev.Close)
 
-	cfg := check.E1(dev.Config(1))
+	cfg := check.E1(dev.Config(1)) // connect device if this fails
 	defer check.Call(cfg.Close)
 
 	intf := check.E1(cfg.Interface(2, 0))
