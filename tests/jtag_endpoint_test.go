@@ -1,4 +1,4 @@
-package esp32c6
+package tests
 
 import (
 	"github.com/google/gousb"
@@ -18,17 +18,17 @@ func TestJtagEndpoint(t *testing.T) {
 	ctx := gousb.NewContext()
 	defer check.Call(ctx.Close)
 
-	dev := check.E1(ctx.OpenDeviceWithVIDPID(0x303A, 0x1001)) // add udev rule if this fails
+	dev := check.Err1(ctx.OpenDeviceWithVIDPID(0x303A, 0x1001)) // add udev rule if this fails
 	defer check.Call(dev.Close)
 
-	cfg := check.E1(dev.Config(1)) // connect device if this fails
+	cfg := check.Err1(dev.Config(1)) // connect device if this fails
 	defer check.Call(cfg.Close)
 
-	intf := check.E1(cfg.Interface(2, 0))
+	intf := check.Err1(cfg.Interface(2, 0))
 	defer intf.Close()
 
-	outEP := check.E1(intf.OutEndpoint(2))
-	inEP := check.E1(intf.InEndpoint(3))
+	outEP := check.Err1(intf.OutEndpoint(2))
+	inEP := check.Err1(intf.InEndpoint(3))
 
 	assert.Equal(t, "ep #2 OUT (address 0x02) bulk [64 bytes]", outEP.String())
 	assert.Equal(t, "ep #3 IN (address 0x83) bulk [64 bytes]", inEP.String())
