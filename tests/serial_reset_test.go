@@ -3,17 +3,12 @@ package tests
 import (
 	"github.com/temnok/esp32c6/check"
 	"go.bug.st/serial"
-	"runtime/debug"
 	"testing"
 	"time"
 )
 
 func TestSerialReset(t *testing.T) {
-	defer func() {
-		if err := recover(); err != nil {
-			t.Fatalf("%v\n%s", err, debug.Stack())
-		}
-	}()
+	defer handlePanic(t)
 
 	port := check.Err1(serial.Open("/dev/ttyACM0", &serial.Mode{}))
 
