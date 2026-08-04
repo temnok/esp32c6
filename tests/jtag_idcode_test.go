@@ -8,19 +8,27 @@ import (
 	"testing"
 )
 
-func TestTapIdcode(t *testing.T) {
+func TestJtagIdcode(t *testing.T) {
 	defer handlePanic(t)
 
 	withJtagUsbEndpoints(func(in *gousb.InEndpoint, out *gousb.OutEndpoint) {
 
+		// Table 32.3-3. Commands of a Nibble
+
+		// CMD_CLK   0 cap tms tdi
+		// CMD_RST   1   0   0 rst
+		// CMD_FLUSH 1   0   1   0
+		// CMD_RSV   1   0   1   1
+		// CMD_REP   1   1  R1  R0
+
 		sequence := []byte{
 			0b_0010_0010, // send 5 TMS clocks to reset state machine (same as TRST)
-			0b_0010_0010, // entering TestLogicReset state
-			0b_0010_0000, // and then RunTestIdle state; by default, IR == IDCODE
+			0b_0010_0010, // entering Reset state
+			0b_0010_0000, // and then Idle state; by default, IR == IDCODE
 
-			0b_0010_0000, // SelectDRScan, CaptureDR
+			0b_0010_0000, // Select-DR, Capture-DR
 
-			0b_0000_0100, // 16x2 = 32 ShiftDR with capturing TDI
+			0b_0000_0100, // 16x2 = 32 Shift-DR with capturing TDI
 			0b_0100_0100,
 			0b_0100_0100,
 			0b_0100_0100,
@@ -37,11 +45,11 @@ func TestTapIdcode(t *testing.T) {
 			0b_0100_0100,
 			0b_0100_0100,
 
-			0b_0110_0010, // Exit1DR, UpdateDR
-			0b_0000_1010, // RunTestIdle, Flush
+			0b_0110_0010, // Exit1-DR, Update-DR
+			0b_0000_1010, // Idle, Flush
 		}
 
-		assert.Equal(t, 22, check.Err1(out.Write(sequence)))
+		assert.Equal(t, len(sequence), check.Err1(out.Write(sequence)))
 
 		data := make([]byte, 4)
 		assert.Equal(t, 4, check.Err1(in.Read(data)))
