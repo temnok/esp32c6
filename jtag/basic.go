@@ -2,11 +2,11 @@ package jtag
 
 import (
 	"fmt"
-	"github.com/google/gousb"
 	"github.com/temnok/esp32c6/check"
+	"io"
 )
 
-func BasicTransaction(w *gousb.OutEndpoint, r *gousb.InEndpoint, irVal, tdLen, tdi int) (tdo int) {
+func BasicTransaction(usb io.ReadWriter, irVal, tdLen, tdi int) (tdo int) {
 	ir := byte(irVal) // 5 bits used only
 
 	// according to "Table 32.3-3. Commands of a Nibble" of "ESP32-C6 Technical Reference Manual"
@@ -32,13 +32,13 @@ func BasicTransaction(w *gousb.OutEndpoint, r *gousb.InEndpoint, irVal, tdLen, t
 
 	nibbles = nibbles[:len(nibbles)/2]
 
-	n := check.Err1(w.Write(nibbles))
+	n := check.Err1(usb.Write(nibbles))
 	if n != len(nibbles) {
 		panic(fmt.Errorf("outEndpoint.Write() returned %v, expected %v", n, len(nibbles)))
 	}
 
 	tdoBytes := make([]byte, (tdLen+7)/8)
-	n = check.Err1(r.Read(tdoBytes))
+	n = check.Err1(usb.Read(tdoBytes))
 	if n != len(tdoBytes) {
 		panic(fmt.Errorf("inEndpoint.Read() returned %v, expected %v", n, len(tdoBytes)))
 	}
