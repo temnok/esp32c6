@@ -13,7 +13,7 @@ func TestJtagIdcode(t *testing.T) {
 
 	withJtagUsbEndpoints(func(in *gousb.InEndpoint, out *gousb.OutEndpoint) {
 
-		// Table 32.3-3. Commands of a Nibble
+		// "Table 32.3-3. Commands of a Nibble" of "ESP32-C6 Technical Reference Manual"
 
 		// CMD_CLK   0 cap tms tdi
 		// CMD_RST   1   0   0 rst
@@ -46,7 +46,7 @@ func TestJtagIdcode(t *testing.T) {
 			0b_0100_0100,
 
 			0b_0110_0010, // Exit1-DR, Update-DR
-			0b_0000_1010, // Idle, Flush
+			0b_1010_1010, // Idle, Flush
 		}
 
 		assert.Equal(t, len(sequence), check.Err1(out.Write(sequence)))
