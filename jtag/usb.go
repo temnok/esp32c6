@@ -15,7 +15,7 @@ func WithUsbDevice(f func(*gousb.Device)) {
 	f(dev)
 }
 
-func WithUsbEndpoints(f func(*gousb.OutEndpoint, *gousb.InEndpoint)) {
+func WithUsbEndpoints(f func(*gousb.InEndpoint, *gousb.OutEndpoint)) {
 	WithUsbDevice(func(dev *gousb.Device) {
 
 		cfg := check.Err1(dev.Config(1)) // connect device if this fails
@@ -24,10 +24,9 @@ func WithUsbEndpoints(f func(*gousb.OutEndpoint, *gousb.InEndpoint)) {
 		intf := check.Err1(cfg.Interface(2, 0))
 		defer intf.Close()
 
-		w := check.Err1(intf.OutEndpoint(2))
 		r := check.Err1(intf.InEndpoint(3))
+		w := check.Err1(intf.OutEndpoint(2))
 
-		f(w, r)
-
+		f(r, w)
 	})
 }

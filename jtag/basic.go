@@ -20,7 +20,7 @@ func BasicTransaction(w *gousb.OutEndpoint, r *gousb.InEndpoint, irVal, tdLen, t
 	}
 
 	for i := 0; i < tdLen; i++ {
-		nibbles = append(nibbles, byte(4|tdi>>i&1))
+		nibbles = append(nibbles, byte(4|tdi>>i&1)) // Shift-DR with capture
 	}
 
 	nibbles[len(nibbles)-1] |= 2         // Exit1-ID
