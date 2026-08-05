@@ -1,4 +1,4 @@
-package jtag
+package dmi
 
 import (
 	"fmt"
@@ -6,12 +6,7 @@ import (
 	"io"
 )
 
-const (
-	DmiOpRead  = 1
-	DmiOpWrite = 2
-)
-
-func SelectDMI(usb io.Writer) {
+func Initialize(usb io.Writer) {
 	// JTAG TAP: move to initial state, write 0x11 to IR and move to Idle state
 	nibbles := []byte{
 		// 4=cap, 2=tms, 1=tdi
@@ -33,7 +28,7 @@ func SelectDMI(usb io.Writer) {
 }
 
 // Debug Module Interface Access (dmi, at 0x11)
-func AccessDMI(usb io.ReadWriter, addr, data, op int) (int, int, int) {
+func access(usb io.ReadWriter, addr, data, op int) (int, int, int) {
 	a, d := addr, data
 	nibbles := []byte{
 		0x20,                                    // Select-DR, Capture-DR,
@@ -81,4 +76,28 @@ func AccessDMI(usb io.ReadWriter, addr, data, op int) (int, int, int) {
 
 	resp := int(r[5])<<40 | int(r[4])<<32 | int(r[3])<<24 | int(r[2])<<16 | int(r[1])<<8 | int(r[0])
 	return resp >> 34, int(uint32(resp >> 2)), resp & 3
+}
+
+func Read(usb io.ReadWriter, addr int) int {
+	a, d, op := access(usb, addr, 0, 1)
+	if op != 0 {
+		panic(fmt.Errorf("ReadDMI returned %v", op))
+	}
+
+	if a != addr {
+		panic(fmt.Errorf("ReadDMI returned address 0x%X, expected 0x%X", a, addr))
+	}
+
+	return d
+}
+
+func Write(usb io.ReadWriter, addr, data int) {
+	a, _, op := access(usb, addr, data, 2)
+	if op != 0 {
+		panic(fmt.Errorf("WriteDMI returned %v", op))
+	}
+
+	if a != addr {
+		panic(fmt.Errorf("WriteDMI returned address 0x%X, expected 0x%X", a, addr))
+	}
 }
