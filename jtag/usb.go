@@ -16,7 +16,7 @@ func WithUsbDevice(f func(*gousb.Device)) {
 	f(dev)
 }
 
-func WithUsbEndpoints(f func(io.ReadWriter)) {
+func WithUsbConnection(f func(io.ReadWriter)) {
 	WithUsbDevice(func(dev *gousb.Device) {
 
 		cfg := check.Err1(dev.Config(1)) // connect device if this fails
