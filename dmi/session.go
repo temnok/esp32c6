@@ -13,7 +13,13 @@ func Session(block func(*Connection)) {
 	jtag.WithUsbConnection(func(usb io.ReadWriter) {
 		Initialize(usb)
 
-		block(&Connection{usb})
+		conn := &Connection{usb}
+
+		conn.Write(Dmcontrol, 1<<DmcontrolDmactive)
+		for conn.Read(Dmcontrol)>>DmcontrolDmactive&1 == 0 {
+		}
+
+		block(conn)
 	})
 }
 
