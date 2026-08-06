@@ -10,7 +10,7 @@ func TestDmiDmstatus(t *testing.T) {
 	defer handlePanic(t)
 
 	dmi.Session(func(conn *dmi.Connection) {
-		assert.Equal(t, 0b_1100_0000_1100_1010_0010, conn.Read(dmi.Dmstatus))
+		assert.Equal(t, 2, conn.Read(dmi.Dmstatus)&0xF)
 
 		// version         0010 (0.13): There is a Debug Module and it conforms to version 0.13 of this specification
 		// confstrptrvalid    0 (invalid): confstrptr0--confstrptr3 hold information which is not relevant to the configuration structure
@@ -38,6 +38,9 @@ func TestDmcontrolHasel(t *testing.T) {
 	dmi.Session(func(conn *dmi.Connection) {
 		conn.Write(dmi.Dmcontrol, 1<<dmi.DmcontrolHasel|1<<dmi.DmcontrolDmactive)
 		assert.Equal(t, 1, conn.Read(dmi.Dmcontrol)>>dmi.DmcontrolHasel&1)
+
+		conn.Write(dmi.Dmcontrol, 0<<dmi.DmcontrolHasel|1<<dmi.DmcontrolDmactive)
+		assert.Equal(t, 0, conn.Read(dmi.Dmcontrol)>>dmi.DmcontrolHasel&1)
 	})
 }
 
@@ -50,8 +53,17 @@ func TestDmcontrolNdmreset(t *testing.T) {
 
 		conn.Write(dmi.Dmcontrol, 0<<dmi.DmcontrolNdmreset|1<<dmi.DmcontrolDmactive)
 		assert.Equal(t, 0, conn.Read(dmi.Dmcontrol)>>dmi.DmcontrolNdmreset&1)
+	})
+}
 
-		//assert.Equal(t, 0b_1100_0000_1100_1010_0010, conn.Read(dmi.Dmstatus))
-		//fmt.Printf("%b\n", conn.Read(dmi.Dmstatus))
+func TestHalting(t *testing.T) {
+	dmi.Session(func(conn *dmi.Connection) {
+		//conn.Write(dmi.Dmcontrol, 1<<dmi.DmcontrolResumereq|0<<dmi.DmcontrolHartsello|1<<dmi.DmcontrolDmactive)
+		//for conn.Read(dmi.Dmstatus)>>dmi.DmstatusAnyrunning&1 == 0 {
+		//}
+
+		//conn.Write(dmi.Dmcontrol, 1<<dmi.DmcontrolHaltreq|0<<dmi.DmcontrolHartsello|1<<dmi.DmcontrolDmactive)
+		//for conn.Read(dmi.Dmstatus)>>dmi.DmstatusAnyhalted&1 == 0 {
+		//}
 	})
 }

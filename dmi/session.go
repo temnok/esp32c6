@@ -11,22 +11,16 @@ type Connection struct {
 
 func Session(block func(*Connection)) {
 	jtag.WithUsbConnection(func(usb io.ReadWriter) {
-		Initialize(usb)
+		initialize(usb)
 
-		conn := &Connection{usb}
-
-		conn.Write(Dmcontrol, 1<<DmcontrolDmactive)
-		for conn.Read(Dmcontrol)>>DmcontrolDmactive&1 == 0 {
-		}
-
-		block(conn)
+		block(&Connection{usb})
 	})
 }
 
 func (c *Connection) Read(addr int) int {
-	return Read(c.usb, addr)
+	return read(c.usb, addr)
 }
 
 func (c *Connection) Write(addr, data int) {
-	Write(c.usb, addr, data)
+	write(c.usb, addr, data)
 }
