@@ -8,7 +8,7 @@ import (
 )
 
 func TestSerialReset(t *testing.T) {
-	defer handlePanic(t)
+	defer check.RecoverAndPrintStack(t.Fatal)
 
 	port := check.Err1(serial.Open("/dev/ttyACM0", &serial.Mode{}))
 

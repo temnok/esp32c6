@@ -2,14 +2,15 @@ package tests
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/temnok/esp32c6/check"
 	"github.com/temnok/esp32c6/dmi"
 	"testing"
 )
 
 func TestDmiDmstatus(t *testing.T) {
-	defer handlePanic(t)
+	defer check.RecoverAndPrintStack(t.Fatal)
 
-	dmi.Session(func(conn *dmi.Connection) {
+	dmi.Session(func(conn *dmi.Conn) {
 		assert.Equal(t, 2, conn.Read(dmi.Dmstatus)&0xF)
 
 		// version         0010 (0.13): There is a Debug Module and it conforms to version 0.13 of this specification
@@ -33,9 +34,9 @@ func TestDmiDmstatus(t *testing.T) {
 }
 
 func TestDmcontrolHasel(t *testing.T) {
-	defer handlePanic(t)
+	defer check.RecoverAndPrintStack(t.Fatal)
 
-	dmi.Session(func(conn *dmi.Connection) {
+	dmi.Session(func(conn *dmi.Conn) {
 		conn.Write(dmi.Dmcontrol, 1<<dmi.DmcontrolHasel|1<<dmi.DmcontrolDmactive)
 		assert.Equal(t, 1, conn.Read(dmi.Dmcontrol)>>dmi.DmcontrolHasel&1)
 
@@ -45,9 +46,9 @@ func TestDmcontrolHasel(t *testing.T) {
 }
 
 func TestDmcontrolNdmreset(t *testing.T) {
-	defer handlePanic(t)
+	defer check.RecoverAndPrintStack(t.Fatal)
 
-	dmi.Session(func(conn *dmi.Connection) {
+	dmi.Session(func(conn *dmi.Conn) {
 		conn.Write(dmi.Dmcontrol, 1<<dmi.DmcontrolNdmreset|1<<dmi.DmcontrolDmactive)
 		assert.Equal(t, 1, conn.Read(dmi.Dmcontrol)>>dmi.DmcontrolNdmreset&1)
 
@@ -57,7 +58,9 @@ func TestDmcontrolNdmreset(t *testing.T) {
 }
 
 func TestHalting(t *testing.T) {
-	dmi.Session(func(conn *dmi.Connection) {
+	defer check.RecoverAndPrintStack(t.Fatal)
+
+	dmi.Session(func(conn *dmi.Conn) {
 		//conn.Write(dmi.Dmcontrol, 1<<dmi.DmcontrolResumereq|0<<dmi.DmcontrolHartsello|1<<dmi.DmcontrolDmactive)
 		//for conn.Read(dmi.Dmstatus)>>dmi.DmstatusAnyrunning&1 == 0 {
 		//}

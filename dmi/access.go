@@ -2,35 +2,23 @@ package dmi
 
 import (
 	"fmt"
-	"github.com/temnok/esp32c6/check"
-	"io"
+	"github.com/temnok/esp32c6/jtag"
 )
 
-func initialize(usb io.ReadWriter) {
-	// JTAG TAP: move to initial state, write 0x11 to IR and move to Idle state
-	nibbles := []byte{
-		// 4=cap, 2=tms, 1=tdi
-		0x22,
-		0x22,
-		0x20, // 5xTMS==Reset, Idle,
-		0x22, // Select-DR, Select-IR,
-		0x00, // Capture-IR, Shift-IR,
-		0x10, // Shift-IR(1), Shift-IR(0),
-		0x00, // Shift-IR(0), Shift-IR(0),
-		0x32, // Exit1-IR(1), Update-IR,
-		0x00, // Idle, Idle
+func initialize(conn *jtag.Conn) {
+	conn.WriteIR(0x11)
+
+	write(conn, Dmcontrol, 0<<DmcontrolDmactive)
+	for read(conn, Dmcontrol)>>DmcontrolDmactive&1 != 0 {
 	}
 
-	n := check.Err1(usb.Write(nibbles))
-	if n != len(nibbles) {
-		panic(fmt.Errorf("SelectDMI/usb.Write() returned %v, expected %v", n, len(nibbles)))
+	write(conn, Dmcontrol, 1<<DmcontrolDmactive)
+	for read(conn, Dmcontrol)>>DmcontrolDmactive&1 == 0 {
 	}
-
-	enableDM(usb)
 }
 
 // Debug Module Interface Access (dmi, at 0x11)
-func access(usb io.ReadWriter, addr, data, op int) (int, int, int) {
+func access(conn *jtag.Conn, addr, data, op int) (int, int, int) {
 	a, d := addr, data
 	nibbles := []byte{
 		0x20,                                    // Select-DR, Capture-DR,
@@ -65,23 +53,17 @@ func access(usb io.ReadWriter, addr, data, op int) (int, int, int) {
 		0x0A,                                    // Idle, Flush
 	}
 
-	n := check.Err1(usb.Write(nibbles))
-	if n != len(nibbles) {
-		panic(fmt.Errorf("AccessDMI/usb.Write() returned %v, expected %v", n, len(nibbles)))
-	}
+	conn.Write(nibbles)
 
 	r := make([]byte, 6)
-	n = check.Err1(usb.Read(r))
-	if n != len(r) {
-		panic(fmt.Errorf("AccessDMI/usb.Read() returned %v, expected %v", n, len(nibbles)))
-	}
+	conn.Read(r)
 
 	resp := int(r[5])<<40 | int(r[4])<<32 | int(r[3])<<24 | int(r[2])<<16 | int(r[1])<<8 | int(r[0])
 	return resp >> 34, int(uint32(resp >> 2)), resp & 3
 }
 
-func read(usb io.ReadWriter, addr int) int {
-	a, d, op := access(usb, addr, 0, 1)
+func read(conn *jtag.Conn, addr int) int {
+	a, d, op := access(conn, addr, 0, 1)
 	if op != 0 {
 		panic(fmt.Errorf("ReadDMI returned %v", op))
 	}
@@ -93,23 +75,13 @@ func read(usb io.ReadWriter, addr int) int {
 	return d
 }
 
-func write(usb io.ReadWriter, addr, data int) {
-	a, _, op := access(usb, addr, data, 2)
+func write(conn *jtag.Conn, addr, data int) {
+	a, _, op := access(conn, addr, data, 2)
 	if op != 0 {
 		panic(fmt.Errorf("WriteDMI returned %v", op))
 	}
 
 	if a != addr {
 		panic(fmt.Errorf("WriteDMI returned address 0x%X, expected 0x%X", a, addr))
-	}
-}
-
-func enableDM(usb io.ReadWriter) {
-	write(usb, Dmcontrol, 0<<DmcontrolDmactive)
-	for read(usb, Dmcontrol)>>DmcontrolDmactive&1 != 0 {
-	}
-
-	write(usb, Dmcontrol, 1<<DmcontrolDmactive)
-	for read(usb, Dmcontrol)>>DmcontrolDmactive&1 == 0 {
 	}
 }
