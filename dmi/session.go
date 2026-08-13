@@ -1,13 +1,15 @@
 package dmi
 
 import (
-	"github.com/temnok/esp32c6/jtag"
+	"github.com/temnok/esp32c6/tap"
 )
 
 func Session(block func(*Conn)) {
-	jtag.Session(func(conn *jtag.Conn) {
-		initialize(conn)
+	tap.Session(func(tap *tap.Conn) {
+		conn := &Conn{tap}
 
-		block(&Conn{conn})
+		conn.initialize()
+
+		block(conn)
 	})
 }
