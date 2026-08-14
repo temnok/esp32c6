@@ -7,13 +7,12 @@ import (
 	"testing"
 )
 
-func TestHartCount(t *testing.T) {
+func TestHartResetHalt(t *testing.T) {
 	defer check.RecoverAndPrintStack(t.Fatal)
 
 	debug.Session(func(conn *debug.Conn) {
 		assert.Equal(t, 2, conn.HartCount())
 
-		conn.HartHalt(0)
-		//conn.HartHalt(1)
+		conn.HartResetAndHalt(0)
 	})
 }

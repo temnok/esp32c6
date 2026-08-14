@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestJtagIdcode(t *testing.T) {
+func TestTapIdcode(t *testing.T) {
 	defer check.RecoverAndPrintStack(t.Fatal)
 
 	tap.Session(func(conn *tap.Conn) {

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestJtagBypass(t *testing.T) {
+func TestTapBypass(t *testing.T) {
 	defer check.RecoverAndPrintStack(t.Fatal)
 
 	tap.Session(func(conn *tap.Conn) {

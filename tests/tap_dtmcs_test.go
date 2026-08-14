@@ -8,7 +8,7 @@ import (
 )
 
 // "6.1.4. DTM Control and Status (dtmcs, at 0x10)" from "The RISC-V Debug Specification"
-func TestJtagDtmcs(t *testing.T) {
+func TestTapDtmcs(t *testing.T) {
 	defer check.RecoverAndPrintStack(t.Fatal)
 
 	tap.Session(func(conn *tap.Conn) {

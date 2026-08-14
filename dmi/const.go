@@ -8,13 +8,17 @@ const (
 	Hawindow    = 0x15
 	Command     = 0x17
 
-	DmcontrolDmactive  = 0
-	DmcontrolNdmreset  = 1
-	DmcontrolHartselhi = 6
-	DmcontrolHartsello = 16
-	DmcontrolHasel     = 26
-	DmcontrolResumereq = 30
-	DmcontrolHaltreq   = 31
+	DmcontrolDmactive        = 0
+	DmcontrolNdmreset        = 1
+	DmcontrolClrresethaltreq = 2
+	DmcontrolSetresethaltreq = 3
+	DmcontrolHartselhi       = 6
+	DmcontrolHartsello       = 16
+	DmcontrolHasel           = 26
+	DmcontrolAckhavereset    = 28
+	DmcontrolHartreset       = 29
+	DmcontrolResumereq       = 30
+	DmcontrolHaltreq         = 31
 
 	DmstatusAnyhalted       = 8
 	DmstatusAllhalted       = 9

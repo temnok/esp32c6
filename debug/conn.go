@@ -27,8 +27,30 @@ func (c *Conn) HartSelect(i int) {
 	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|1<<dmi.DmcontrolDmactive)
 }
 
+func (c *Conn) HartResetAndHalt(i int) {
+	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
+		1<<dmi.DmcontrolAckhavereset|
+		1<<dmi.DmcontrolDmactive)
+
+	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
+		1<<dmi.DmcontrolSetresethaltreq|
+		1<<dmi.DmcontrolDmactive)
+
+	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
+		1<<dmi.DmcontrolHartreset|
+		1<<dmi.DmcontrolDmactive)
+
+	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
+		1<<dmi.DmcontrolDmactive)
+
+	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAnyhalted&1 == 0 {
+	}
+}
+
 func (c *Conn) HartHalt(i int) {
-	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|1<<dmi.DmcontrolHaltreq|1<<dmi.DmcontrolDmactive)
+	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
+		1<<dmi.DmcontrolHaltreq|
+		1<<dmi.DmcontrolDmactive)
 
 	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAnyhalted&1 == 0 {
 	}

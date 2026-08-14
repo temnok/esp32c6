@@ -56,17 +56,3 @@ func TestDmcontrolNdmreset(t *testing.T) {
 		assert.Equal(t, 0, conn.Read(dmi.Dmcontrol)>>dmi.DmcontrolNdmreset&1)
 	})
 }
-
-func TestHalting(t *testing.T) {
-	defer check.RecoverAndPrintStack(t.Fatal)
-
-	dmi.Session(func(conn *dmi.Conn) {
-		//conn.Write(dmi.Dmcontrol, 1<<dmi.DmcontrolResumereq|0<<dmi.DmcontrolHartsello|1<<dmi.DmcontrolDmactive)
-		//for conn.Read(dmi.Dmstatus)>>dmi.DmstatusAnyrunning&1 == 0 {
-		//}
-
-		//conn.Write(dmi.Dmcontrol, 1<<dmi.DmcontrolHaltreq|0<<dmi.DmcontrolHartsello|1<<dmi.DmcontrolDmactive)
-		//for conn.Read(dmi.Dmstatus)>>dmi.DmstatusAnyhalted&1 == 0 {
-		//}
-	})
-}
