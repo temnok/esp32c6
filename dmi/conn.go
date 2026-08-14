@@ -10,7 +10,7 @@ type Conn struct {
 }
 
 func (conn *Conn) initialize() {
-	conn.tap.InitIdle()
+	//conn.tap.InitIdle()
 	conn.tap.WriteIR(0x11)
 
 	conn.Write(Dmcontrol, 0<<DmcontrolDmactive)

@@ -5,9 +5,11 @@ import (
 )
 
 func Session(block func(*Conn)) {
-	jtag.Session(func(conn *jtag.Conn) {
-		block(&Conn{
-			conn,
-		})
+	jtag.Session(func(jtag *jtag.Conn) {
+		conn := &Conn{jtag}
+
+		//conn.InitIdle()
+
+		block(conn)
 	})
 }

@@ -10,6 +10,7 @@ const (
 
 	DmcontrolDmactive  = 0
 	DmcontrolNdmreset  = 1
+	DmcontrolHartselhi = 6
 	DmcontrolHartsello = 16
 	DmcontrolHasel     = 26
 	DmcontrolResumereq = 30
@@ -18,5 +19,6 @@ const (
 	DmstatusAnyhalted       = 8
 	DmstatusAllhalted       = 9
 	DmstatusAnyrunning      = 10
+	DmstatusAnynonexistent  = 14
 	DmstatusNdmresetpending = 24
 )
