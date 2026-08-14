@@ -12,5 +12,8 @@ func TestHartCount(t *testing.T) {
 
 	debug.Session(func(conn *debug.Conn) {
 		assert.Equal(t, 2, conn.HartCount())
+
+		conn.HartHalt(0)
+		//conn.HartHalt(1)
 	})
 }

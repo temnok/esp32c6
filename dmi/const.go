@@ -20,5 +20,6 @@ const (
 	DmstatusAllhalted       = 9
 	DmstatusAnyrunning      = 10
 	DmstatusAnynonexistent  = 14
+	DmstatusAllhavereset    = 19
 	DmstatusNdmresetpending = 24
 )

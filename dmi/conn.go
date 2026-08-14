@@ -10,7 +10,7 @@ type Conn struct {
 }
 
 func (conn *Conn) initialize() {
-	//conn.tap.InitIdle()
+	conn.tap.InitIdle()
 	conn.tap.WriteIR(0x11)
 
 	conn.Write(Dmcontrol, 0<<DmcontrolDmactive)
@@ -20,6 +20,11 @@ func (conn *Conn) initialize() {
 	conn.Write(Dmcontrol, 1<<DmcontrolDmactive)
 	for conn.Read(Dmcontrol)>>DmcontrolDmactive&1 == 0 {
 	}
+
+	//conn.Write(Dmcontrol, 1<<DmcontrolNdmreset|1<<DmcontrolDmactive)
+	//conn.Write(Dmcontrol, 1<<DmcontrolDmactive)
+	//for conn.Read(Dmstatus)>>DmstatusAllhavereset&1 == 0 {
+	//}
 }
 
 func (c *Conn) Read(addr int) int {
