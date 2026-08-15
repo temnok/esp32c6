@@ -1,6 +1,7 @@
 package debug
 
 import (
+	"fmt"
 	"github.com/temnok/esp32c6/dmi"
 )
 
@@ -52,8 +53,34 @@ func (c *Conn) HartHalt(i int) {
 		1<<dmi.DmcontrolHaltreq|
 		1<<dmi.DmcontrolDmactive)
 
+	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
+		1<<dmi.DmcontrolDmactive)
+
 	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAnyhalted&1 == 0 {
 	}
+}
 
-	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|1<<dmi.DmcontrolDmactive)
+func (c *Conn) ReadPC() int {
+	return c.ReadCSR(0x7b1)
+}
+
+func (c *Conn) ReadGPR(i int) int {
+	return c.ReadCSR(0x1000 + i)
+}
+
+func (c *Conn) ReadCSR(i int) int {
+	c.dmi.Write(dmi.Command, dmi.CmdtypeAccessRegister<<dmi.CommandCmdtype|
+		2<<dmi.CommandArAarsize|
+		1<<dmi.CommandArTransfer|
+		i<<dmi.CommandArRegno)
+
+	a := c.dmi.Read(dmi.Abstractcs)
+	for ; a>>dmi.AbstractcsBusy&1 == 1; a = c.dmi.Read(dmi.Abstractcs) {
+	}
+
+	if cmderr := a >> dmi.AbstractcsCmderr & 7; cmderr != dmi.CmderrNone {
+		panic(fmt.Errorf("abstract command error: %v", cmderr))
+	}
+
+	return c.dmi.Read(dmi.Data0)
 }

@@ -20,21 +20,21 @@ func (c *Conn) WriteIR(val int) {
 	c.jtag.Flush(nil)
 }
 
-func (c *Conn) ReadDR(len int) int {
+func (c *Conn) ReadDR(bitLen int) int {
 	c.jtag.ClockTms(1)             // Select-DR
 	c.jtag.ClockTms(0)             // Capture-DR
 	c.jtag.ClockTms(0)             // Shift-DR
 	c.jtag.ClockCapTmsTdi(1, 0, 0) // Shift-DR
 
-	if len > 2 {
-		c.jtag.Repeat(len - 2)
+	if bitLen > 2 {
+		c.jtag.Repeat(bitLen - 2)
 	}
 
 	c.jtag.ClockCapTmsTdi(1, 1, 0) // Exit1-DR
 	c.jtag.ClockTms(1)             // Update-DR
 	c.jtag.ClockTms(0)             // Idle
 
-	buf := make([]byte, (len+7)/8)
+	buf := make([]byte, (bitLen+7)/8)
 	c.jtag.Flush(buf)
 
 	out := 0

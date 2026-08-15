@@ -31,7 +31,7 @@ func (c *Conn) ClockTms(tms int) {
 }
 
 func (c *Conn) Repeat(n int) {
-	for i := n; i != 0; i >>= 2 {
+	for i := n; i > 0; i >>= 2 {
 		c.appendNibble(0b_1100 | i&3) // CMD_REP
 	}
 }
