@@ -15,6 +15,10 @@ type Conn struct {
 	pendingNibble bool
 }
 
+func (c *Conn) setDiv(div int) {
+	c.Control(0x40, 0, div, 0, nil) // VEND_JTAG_SETDIV
+}
+
 func (c *Conn) Control(requestType, request, value, index int, buf []byte) {
 	n := check.Err1(c.dev.Control(byte(requestType), byte(request), uint16(value), uint16(index), buf))
 	if n != len(buf) {

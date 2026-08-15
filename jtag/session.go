@@ -21,9 +21,13 @@ func Session(block func(*Conn)) {
 	in := check.Err1(intf.InEndpoint(3))
 	out := check.Err1(intf.OutEndpoint(2))
 
-	block(&Conn{
+	conn := &Conn{
 		dev: dev,
 		in:  in,
 		out: out,
-	})
+	}
+
+	conn.setDiv(1)
+
+	block(conn)
 }
