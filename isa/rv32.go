@@ -7,9 +7,9 @@ type RV32IMAC interface { // 86 =
 	RV32C //                 27
 }
 
-type RV32IMACpcf interface { // 98 =
-	RV32IMAC   //               86 +
-	Privileged //                5 +
-	Zicsr      //                6 +
-	Zifencei   //                1
+type RV32 interface { // 98 =
+	RV32IMAC   //        86 +
+	Privileged //         5 +
+	Zicsr      //         6 +
+	Zifencei   //         1
 }

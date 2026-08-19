@@ -37,29 +37,29 @@ type baseComputationalImmInstructions interface {
 }
 
 type baseControlTransferInstructions interface {
-	BEQ(rs1, rs2, offset int)  // Branch if EQual
-	BGE(rs1, rs2, offset int)  // Branch if Greater or Equal
-	BGEU(rs1, rs2, offset int) // Branch if Greater or Equal, Unsigned operands
-	BLT(rs1, rs2, offset int)  // Branch if Less Than
-	BLTU(rs1, rs2, offset int) // Branch if Less Than, Unsigned operands
-	BNE(rs1, rs2, offset int)  // Branch if Not Equal
-	JAL(rd, offset int)        // Jump And Link by immediate offset
-	JALR(rd, rs1, offset int)  // Jump And Link to address in register
+	BEQ(rs1, rs2, off int)  // Branch if EQual
+	BGE(rs1, rs2, off int)  // Branch if Greater or Equal
+	BGEU(rs1, rs2, off int) // Branch if Greater or Equal, Unsigned operands
+	BLT(rs1, rs2, off int)  // Branch if Less Than
+	BLTU(rs1, rs2, off int) // Branch if Less Than, Unsigned operands
+	BNE(rs1, rs2, off int)  // Branch if Not Equal
+	JAL(rd, off int)        // Jump And Link by immediate offset
+	JALR(rd, rs1, imm int)  // Jump And Link to address in register
 }
 
 type baseLoadStoreInstructions interface {
-	LB(rd, rs1, offset int)  // Load Byte
-	LBU(rd, rs1, offset int) // Load Byte, Unsigned
-	LH(rd, rs1, offset int)  // Load Half word
-	LHU(rd, rs1, offset int) // Load Half word, Unsigned
-	LW(rd, rs1, offset int)  // Load Word
-	SB(rs2, rs1, offset int) // Store Byte
-	SH(rs2, rs1, offset int) // Store Half word
-	SW(rs2, rs1, offset int) // Store Word
+	LB(rd, rs1, imm int)  // Load Byte
+	LBU(rd, rs1, imm int) // Load Byte, Unsigned
+	LH(rd, rs1, imm int)  // Load Half word
+	LHU(rd, rs1, imm int) // Load Half word, Unsigned
+	LW(rd, rs1, imm int)  // Load Word
+	SB(rs2, rs1, imm int) // Store Byte
+	SH(rs2, rs1, imm int) // Store Half word
+	SW(rs2, rs1, imm int) // Store Word
 }
 
 type baseMemoryOrderingInstructions interface {
-	FENCE(pred, succ int) // FENCE for data
+	FENCE() // FENCE for data
 }
 
 type baseSystemInstructions interface {

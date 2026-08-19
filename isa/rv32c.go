@@ -10,16 +10,16 @@ type RV32C interface { //                    27 =
 
 type compressedComputationalInstructions interface {
 	C_ADD(rd, rs2 int) // ADD
-	C_AND(rd, rs int)  // AND
-	C_MV(rd, rs int)   // MoVe
-	C_OR(rd, rs int)   // OR
-	C_SUB(rd, rs int)  // SUBtract
-	C_XOR(rd, rs int)  // eXclusive OR
+	C_AND(rd, rs2 int) // AND
+	C_MV(rd, rs2 int)  // MoVe
+	C_OR(rd, rs2 int)  // OR
+	C_SUB(rd, rs2 int) // SUBtract
+	C_XOR(rd, rs2 int) // eXclusive OR
 }
 
 type compressedComputationalImmInstructions interface {
 	C_ADDI(rd, imm int)     // ADD Immediate
-	C_ADDI16SP(rd, imm int) // ADD Immediate (multiples of 16) to Stack Pointer
+	C_ADDI16SP(imm int)     // ADD Immediate (multiples of 16) to Stack Pointer
 	C_ADDI4SPN(rd, imm int) // ADD Immediate (multiples of 4) to Stack Pointer, Non-destructive
 	C_ANDI(rd, imm int)     // AND with Immediate
 	C_LI(rd, imm int)       // Load Immediate
@@ -30,12 +30,12 @@ type compressedComputationalImmInstructions interface {
 }
 
 type compressedControlTransferInstructions interface {
-	C_J(offset int)        // Jump by offset
-	C_JAL(offset int)      // Jump And Link by offset
-	C_JR(rs int)           // Jump by Register
-	C_JALR(rs int)         // Jump And Link by Register
 	C_BEQZ(rs, offset int) // Branch if EQual to Zero
 	C_BNEZ(rs, offset int) // Branch if Not Equal to Zero
+	C_J(offset int)        // Jump by offset
+	C_JAL(offset int)      // Jump And Link by offset
+	C_JALR(rs int)         // Jump And Link by Register
+	C_JR(rs int)           // Jump by Register
 }
 
 type compressedLoadStoreInstructions interface {
