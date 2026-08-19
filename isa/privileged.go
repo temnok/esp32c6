@@ -7,11 +7,3 @@ type Privileged interface {
 	URET()                   // User mode RETurn
 	WFI()                    // Wait For Interrupt
 }
-
-const (
-	MRET       = 0x30200073
-	SFENCE_VMA = 0x12000073
-	SRET       = 0x10200073
-	URET       = 0x00200073
-	WFI        = 0x10500073
-)
