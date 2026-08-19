@@ -3,6 +3,7 @@ module github.com/temnok/esp32c6
 go 1.26
 
 require (
+	github.com/deadsy/rvda v0.0.0-20230629010427-83726ee22ad9
 	github.com/google/gousb v1.1.3
 	github.com/stretchr/testify v1.11.1
 	go.bug.st/serial v1.8.0

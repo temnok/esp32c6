@@ -1,28 +1,32 @@
 package isa
 
 type RV32C interface { //                    27 =
-	compressedComputationalInstructions   // 15 +
-	compressedControlTransferInstructions //  6 +
-	compressedLoadStoreInstructions       //  4 +
-	compressedSpecialInstructions         //  2
+	compressedComputationalInstructions    // 6 +
+	compressedComputationalImmInstructions // 9 +
+	compressedControlTransferInstructions  // 6 +
+	compressedLoadStoreInstructions        // 4 +
+	compressedSpecialInstructions          // 2
 }
 
 type compressedComputationalInstructions interface {
-	C_ADD(rd, rs2 int)      // ADD
+	C_ADD(rd, rs2 int) // ADD
+	C_AND(rd, rs int)  // AND
+	C_MV(rd, rs int)   // MoVe
+	C_OR(rd, rs int)   // OR
+	C_SUB(rd, rs int)  // SUBtract
+	C_XOR(rd, rs int)  // eXclusive OR
+}
+
+type compressedComputationalImmInstructions interface {
 	C_ADDI(rd, imm int)     // ADD Immediate
 	C_ADDI16SP(rd, imm int) // ADD Immediate (multiples of 16) to Stack Pointer
 	C_ADDI4SPN(rd, imm int) // ADD Immediate (multiples of 4) to Stack Pointer, Non-destructive
-	C_AND(rd, rs int)       // AND
 	C_ANDI(rd, imm int)     // AND with Immediate
 	C_LI(rd, imm int)       // Load Immediate
 	C_LUI(rd, imm int)      // Load Upper Immediate
-	C_MV(rd, rs int)        // MoVe
-	C_OR(rd, rs int)        // OR
 	C_SLLI(rd, imm int)     // Shift Left, Logical by Immediate
 	C_SRAI(rd, imm int)     // Shift Right, Arithmetic by Immediate
 	C_SRLI(rd, imm int)     // Shift Right, Logical by Immediate
-	C_SUB(rd, rs int)       // SUBtract
-	C_XOR(rd, rs int)       // eXclusive OR
 }
 
 type compressedControlTransferInstructions interface {

@@ -1,34 +1,38 @@
 package isa
 
-type RV32I interface { //              42 =
-	baseComputationalInstructions   // 21 +
-	baseControlTransferInstructions //  8 +
-	baseLoadStoreInstructions       //  8 +
-	baseMemoryOrderingInstructions  //  1 +
-	baseSystemInstructions          //  4
+type RV32I interface { //               40 =
+	baseComputationalRegInstructions // 10 +
+	baseComputationalImmInstructions // 11 +
+	baseControlTransferInstructions  //  8 +
+	baseLoadStoreInstructions        //  8 +
+	baseMemoryOrderingInstructions   //  1 +
+	baseSystemInstructions           //  2
 }
 
-type baseComputationalInstructions interface {
-	ADD(rd, rs1, rs2 int)   // ADD
+type baseComputationalRegInstructions interface {
+	ADD(rd, rs1, rs2 int)  // ADD
+	AND(rd, rs1, rs2 int)  // AND
+	OR(rd, rs1, rs2 int)   // OR
+	SLL(rd, rs1, rs2 int)  // Shift Left, Logical
+	SLT(rd, rs1, rs2 int)  // Set if Less Than
+	SLTU(rd, rs1, rs2 int) // Set if Less Than, Unsigned
+	SRA(rd, rs1, rs2 int)  // Shift Right, Arithmetical
+	SRL(rd, rs1, rs2 int)  // Shift Right, Logical
+	SUB(rd, rs1, rs2 int)  // SUBtract
+	XOR(rd, rs1, rs2 int)  // eXclusive OR
+}
+
+type baseComputationalImmInstructions interface {
 	ADDI(rd, rs1, imm int)  // ADD Immediate
-	AND(rd, rs1, rs2 int)   // AND
 	ANDI(rd, rs1, imm int)  // AND with Immediate
 	AUIPC(rd, imm int)      // Add Upper Immediate to PC
 	LUI(rd, imm int)        // Load Upper Immediate
-	OR(rd, rs1, rs2 int)    // OR
 	ORI(rd, rs1, imm int)   // OR with Immediate
-	SLL(rd, rs1, rs2 int)   // Shift Left, Logical
 	SLLI(rd, rs1, imm int)  // Shift Left, Logical by Immediate
-	SLT(rd, rs1, rs2 int)   // Set if Less Than
 	SLTI(rd, rs1, imm int)  // Set if Less Than, with Immediate
 	SLTIU(rd, rs1, imm int) // Set if Less Than, with Immediate, Unsigned
-	SLTU(rd, rs1, rs2 int)  // Set if Less Than, Unsigned
-	SRA(rd, rs1, rs2 int)   // Shift Right, Arithmetical
 	SRAI(rd, rs1, imm int)  // Shift Right, Arithmetical by Immediate
-	SRL(rd, rs1, rs2 int)   // Shift Right, Logical
 	SRLI(rd, rs1, imm int)  // Shift Right, Logical with Immediate
-	SUB(rd, rs1, rs2 int)   // SUBtract
-	XOR(rd, rs1, rs2 int)   // eXclusive OR
 	XORI(rd, rs1, imm int)  // eXclusive OR with Immediate
 }
 
@@ -61,6 +65,4 @@ type baseMemoryOrderingInstructions interface {
 type baseSystemInstructions interface {
 	EBREAK() // Environment BREAK
 	ECALL()  // Environment CALL
-	MRET()   // Machine mode RETurn
-	URET()   // User mode RETurn
 }
