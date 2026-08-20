@@ -45,3 +45,5 @@ func (gen *gen) FENCE() { gen.I(0x0000000F, 0, 0, 0) }
 
 func (gen *gen) EBREAK() { gen.I(0x00100073, 0, 0, 0) }
 func (gen *gen) ECALL()  { gen.I(0x00000073, 0, 0, 0) }
+func (gen *gen) MRET()   { gen.I(0x30200073, 0, 0, 0) }
+func (gen *gen) WFI()    { gen.I(0x10500073, 0, 0, 0) }

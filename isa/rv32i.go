@@ -1,12 +1,12 @@
 package isa
 
-type RV32I interface { //               40 =
+type RV32I interface { //               42 =
 	baseComputationalRegInstructions // 10 +
 	baseComputationalImmInstructions // 11 +
 	baseControlTransferInstructions  //  8 +
 	baseLoadStoreInstructions        //  8 +
 	baseMemoryOrderingInstructions   //  1 +
-	baseSystemInstructions           //  2
+	baseSystemInstructions           //  4
 }
 
 type baseComputationalRegInstructions interface {
@@ -65,4 +65,6 @@ type baseMemoryOrderingInstructions interface {
 type baseSystemInstructions interface {
 	EBREAK() // Environment BREAK
 	ECALL()  // Environment CALL
+	MRET()   // Machine mode RETurn
+	WFI()    // Wait For Interrupt
 }
