@@ -3,6 +3,7 @@ package debug
 import (
 	"fmt"
 	"github.com/temnok/esp32c6/dmi"
+	"github.com/temnok/esp32c6/isa/csr"
 )
 
 type Conn struct {
@@ -61,7 +62,7 @@ func (c *Conn) HartHalt(i int) {
 }
 
 func (c *Conn) ReadPC() int {
-	return c.ReadCSR(0x7b1)
+	return c.ReadCSR(csr.Dpc)
 }
 
 func (c *Conn) ReadGPR(i int) int {
@@ -70,9 +71,9 @@ func (c *Conn) ReadGPR(i int) int {
 
 func (c *Conn) ReadCSR(i int) int {
 	c.dmi.Write(dmi.Command, dmi.CmdtypeAccessRegister<<dmi.CommandCmdtype|
-		2<<dmi.CommandArAarsize|
-		1<<dmi.CommandArTransfer|
-		i<<dmi.CommandArRegno)
+		2<<dmi.CommandARAarsize|
+		1<<dmi.CommandARTransfer|
+		i<<dmi.CommandARRegno)
 
 	a := c.dmi.Read(dmi.Abstractcs)
 	for ; a>>dmi.AbstractcsBusy&1 == 1; a = c.dmi.Read(dmi.Abstractcs) {

@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/temnok/esp32c6/check"
 	"github.com/temnok/esp32c6/debug"
+	"github.com/temnok/esp32c6/isa/csr"
 	"testing"
 )
 
@@ -13,32 +14,31 @@ func TestRegistersAfterReset(t *testing.T) {
 	debug.Session(func(conn *debug.Conn) {
 		conn.HartResetAndHalt(0)
 
-		assert.Equal(t, 0, conn.ReadCSR(0x000)) // ustatus
-		assert.Equal(t, 0, conn.ReadCSR(0x004)) // uie
-		assert.Equal(t, 1, conn.ReadCSR(0x005)) // utvec
-		//		assert.Equal(t, 0, conn.ReadCSR(0x040)) // uscratch ???
-		assert.Equal(t, 0, conn.ReadCSR(0x041)) // uepc
-		assert.Equal(t, 0, conn.ReadCSR(0x042)) // ucause
-		assert.Equal(t, 0, conn.ReadCSR(0x043)) // utval
-		assert.Equal(t, 0, conn.ReadCSR(0x044)) // uip
+		assert.Equal(t, 0, conn.ReadCSR(csr.Ustatus)) // ustatus
+		assert.Equal(t, 0, conn.ReadCSR(csr.Uie))     // uie
+		assert.Equal(t, 1, conn.ReadCSR(csr.Utvec))   // utvec
+		//assert.Equal(t, 0, conn.ReadCSR(csr.Uscratch)) // uscratch ???
+		assert.Equal(t, 0, conn.ReadCSR(csr.Uepc))   // uepc
+		assert.Equal(t, 0, conn.ReadCSR(csr.Ucause)) // ucause
+		assert.Equal(t, 0, conn.ReadCSR(csr.Uip))    // uip
 
-		assert.Equal(t, 1<<21|3<<11, conn.ReadCSR(0x300)) // mstatus: TW | MPP
+		assert.Equal(t, 1<<csr.MstatusTW|3<<csr.MstatusMPP, conn.ReadCSR(csr.Mstatus))
 		misa := 1<<30 | 1<<('n'-'a') | 1<<('u'-'a') | 1<<('x'-'a') |
 			1<<('i'-'a') | 1<<('m'-'a') | 1<<('a'-'a') | 1<<('c'-'a')
-		assert.Equal(t, misa, conn.ReadCSR(0x301))
-		assert.Equal(t, 0b_100010001, conn.ReadCSR(0x303)) // mideleg
-		assert.Equal(t, 0, conn.ReadCSR(0x304))            // mie
-		assert.Equal(t, 1, conn.ReadCSR(0x305))            // mtvec
-		assert.Equal(t, 0, conn.ReadCSR(0x340))            // mscratch
-		assert.Equal(t, 0, conn.ReadCSR(0x341))            // mepc
-		assert.Equal(t, 0, conn.ReadCSR(0x342))            // mcause
-		assert.Equal(t, 0, conn.ReadCSR(0x343))            // mtval
-		assert.Equal(t, 0, conn.ReadCSR(0x344))            // mip
+		assert.Equal(t, misa, conn.ReadCSR(csr.Misa))
+		assert.Equal(t, 0b_100010001, conn.ReadCSR(csr.Mideleg))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Mie))
+		assert.Equal(t, 1, conn.ReadCSR(csr.Mtvec))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Mscratch))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Mepc))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Mcause))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Mtval))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Mip))
 
-		assert.Equal(t, 0x612, conn.ReadCSR(0xF11))      // vendorid
-		assert.Equal(t, 0x80000002, conn.ReadCSR(0xF12)) // marchid
-		assert.Equal(t, 0x2, conn.ReadCSR(0xF13))        // mimpid
-		assert.Equal(t, 0, conn.ReadCSR(0xF14))          // mhartid
+		assert.Equal(t, 0x612, conn.ReadCSR(csr.Mvendorid))
+		assert.Equal(t, 0x80000002, conn.ReadCSR(csr.Marchid))
+		assert.Equal(t, 0x2, conn.ReadCSR(csr.Mimpid))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Mhartid))
 
 		assert.Equal(t, 0x4000_0000, conn.ReadPC())
 

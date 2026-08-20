@@ -60,12 +60,12 @@ const (
 	CmderrReserver     = 6
 	CmderrOther        = 7
 
-	CommandArRegno            = 0
-	CommandArWrite            = 16
-	CommandArTransfer         = 17
-	CommandArPostexec         = 18
-	CommandArAarpostincrement = 19
-	CommandArAarsize          = 20
+	CommandARRegno            = 0
+	CommandARWrite            = 16
+	CommandARTransfer         = 17
+	CommandARPostexec         = 18
+	CommandARAarpostincrement = 19
+	CommandARAarsize          = 20
 
 	CommandCmdtype = 24
 
