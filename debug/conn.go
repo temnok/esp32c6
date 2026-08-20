@@ -85,3 +85,25 @@ func (c *Conn) ReadCSR(i int) int {
 
 	return c.dmi.Read(dmi.Data0)
 }
+
+func (c *Conn) WriteGPR(i, val int) {
+	c.WriteCSR(0x1000+i, val)
+}
+
+func (c *Conn) WriteCSR(i, val int) {
+	c.dmi.Write(dmi.Data0, val)
+
+	c.dmi.Write(dmi.Command, dmi.CmdtypeAccessRegister<<dmi.CommandCmdtype|
+		1<<dmi.CommandARWrite|
+		2<<dmi.CommandARAarsize|
+		1<<dmi.CommandARTransfer|
+		i<<dmi.CommandARRegno)
+
+	a := c.dmi.Read(dmi.Abstractcs)
+	for ; a>>dmi.AbstractcsBusy&1 == 1; a = c.dmi.Read(dmi.Abstractcs) {
+	}
+
+	if cmderr := a >> dmi.AbstractcsCmderr & 7; cmderr != dmi.CmderrNone {
+		panic(fmt.Errorf("abstract command error: %v", cmderr))
+	}
+}

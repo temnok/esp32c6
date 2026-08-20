@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/temnok/esp32c6/check"
 	"github.com/temnok/esp32c6/debug"
+	"github.com/temnok/esp32c6/isa"
 	"github.com/temnok/esp32c6/isa/csr"
 	"testing"
 )
@@ -45,5 +46,8 @@ func TestRegistersAfterReset(t *testing.T) {
 		for i := range 32 {
 			assert.Equal(t, 0, conn.ReadGPR(i))
 		}
+
+		conn.WriteGPR(isa.A0, 0x12345678)
+		assert.Equal(t, 0x12345678, conn.ReadGPR(isa.A0))
 	})
 }
