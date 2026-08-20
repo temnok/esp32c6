@@ -23,13 +23,13 @@ func (gen *gen) SRAI(rd, rs1, imm int)  { gen.I(0x40005013, rd, rs1, imm&31) }
 func (gen *gen) SRLI(rd, rs1, imm int)  { gen.I(0x00005013, rd, rs1, imm&31) }
 func (gen *gen) XORI(rd, rs1, imm int)  { gen.I(0x00004013, rd, rs1, imm) }
 
-func (gen *gen) BEQ(rs1, rs2, off int)  { gen.B(0x00000063, rs1, rs2, off) }
-func (gen *gen) BGE(rs1, rs2, off int)  { gen.B(0x00005063, rs1, rs2, off) }
-func (gen *gen) BGEU(rs1, rs2, off int) { gen.B(0x00007063, rs1, rs2, off) }
-func (gen *gen) BLT(rs1, rs2, off int)  { gen.B(0x00004063, rs1, rs2, off) }
-func (gen *gen) BLTU(rs1, rs2, off int) { gen.B(0x00006063, rs1, rs2, off) }
-func (gen *gen) BNE(rs1, rs2, off int)  { gen.B(0x00001063, rs1, rs2, off) }
-func (gen *gen) JAL(rd, off int)        { gen.J(0x0000006F, rd, off) }
+func (gen *gen) BEQ(rs1, rs2, imm int)  { gen.B(0x00000063, rs1, rs2, imm) }
+func (gen *gen) BGE(rs1, rs2, imm int)  { gen.B(0x00005063, rs1, rs2, imm) }
+func (gen *gen) BGEU(rs1, rs2, imm int) { gen.B(0x00007063, rs1, rs2, imm) }
+func (gen *gen) BLT(rs1, rs2, imm int)  { gen.B(0x00004063, rs1, rs2, imm) }
+func (gen *gen) BLTU(rs1, rs2, imm int) { gen.B(0x00006063, rs1, rs2, imm) }
+func (gen *gen) BNE(rs1, rs2, imm int)  { gen.B(0x00001063, rs1, rs2, imm) }
+func (gen *gen) JAL(rd, imm int)        { gen.J(0x0000006F, rd, imm) }
 func (gen *gen) JALR(rd, rs1, imm int)  { gen.I(0x00000067, rd, rs1, imm) }
 
 func (gen *gen) LB(rd, rs1, imm int)  { gen.I(0x00000003, rd, rs1, imm) }

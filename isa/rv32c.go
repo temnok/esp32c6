@@ -30,19 +30,19 @@ type compressedComputationalImmInstructions interface {
 }
 
 type compressedControlTransferInstructions interface {
-	C_BEQZ(rs, offset int) // Branch if EQual to Zero
-	C_BNEZ(rs, offset int) // Branch if Not Equal to Zero
-	C_J(offset int)        // Jump by offset
-	C_JAL(offset int)      // Jump And Link by offset
-	C_JALR(rs int)         // Jump And Link by Register
-	C_JR(rs int)           // Jump by Register
+	C_BEQZ(rs, imm int) // Branch if EQual to Zero
+	C_BNEZ(rs, imm int) // Branch if Not Equal to Zero
+	C_J(imm int)        // Jump by immediate offset
+	C_JAL(imm int)      // Jump And Link by immediate offset
+	C_JALR(rs int)      // Jump And Link by Register
+	C_JR(rs int)        // Jump by Register
 }
 
 type compressedLoadStoreInstructions interface {
-	C_LW(rd, rs, offset int)   // Load Word
-	C_LWSP(rd, offset int)     // Load Word relative to Stack Pointer
-	C_SW(rs2, rs1, offset int) // Store Word
-	C_SWSP(rs, offset int)     // Store Word relative to Stack Pointer
+	C_LW(rd, rs, imm int)   // Load Word
+	C_LWSP(rd, imm int)     // Load Word relative to Stack Pointer
+	C_SW(rs2, rs1, imm int) // Store Word
+	C_SWSP(rs, imm int)     // Store Word relative to Stack Pointer
 }
 
 type compressedSpecialInstructions interface {

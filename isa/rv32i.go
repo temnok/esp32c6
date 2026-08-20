@@ -37,13 +37,13 @@ type baseComputationalImmInstructions interface {
 }
 
 type baseControlTransferInstructions interface {
-	BEQ(rs1, rs2, off int)  // Branch if EQual
-	BGE(rs1, rs2, off int)  // Branch if Greater or Equal
-	BGEU(rs1, rs2, off int) // Branch if Greater or Equal, Unsigned operands
-	BLT(rs1, rs2, off int)  // Branch if Less Than
-	BLTU(rs1, rs2, off int) // Branch if Less Than, Unsigned operands
-	BNE(rs1, rs2, off int)  // Branch if Not Equal
-	JAL(rd, off int)        // Jump And Link by immediate offset
+	BEQ(rs1, rs2, imm int)  // Branch if EQual
+	BGE(rs1, rs2, imm int)  // Branch if Greater or Equal
+	BGEU(rs1, rs2, imm int) // Branch if Greater or Equal, Unsigned operands
+	BLT(rs1, rs2, imm int)  // Branch if Less Than
+	BLTU(rs1, rs2, imm int) // Branch if Less Than, Unsigned operands
+	BNE(rs1, rs2, imm int)  // Branch if Not Equal
+	JAL(rd, imm int)        // Jump And Link by immediate offset
 	JALR(rd, rs1, imm int)  // Jump And Link to address in register
 }
 
