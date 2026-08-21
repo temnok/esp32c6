@@ -1,6 +1,6 @@
 module github.com/temnok/esp32c6
 
-go 1.26
+go 1.27
 
 require (
 	github.com/deadsy/rvda v0.0.0-20230629010427-83726ee22ad9

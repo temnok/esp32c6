@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+set -e
+cd $(dirname "$0")
+
+mkdir -p tmp
+
+docker run --rm -v $(pwd):/work -w /work tinygo bash -c '
+  tinygo build \
+    -target=esp32c3-generic \
+    -scheduler=none -gc=none -serial=none -panic=trap \
+    -opt=z \
+    -o tmp/probe.o \
+		. &&
+	llvm-objdump-20 \
+	  --source \
+	  --line-numbers \
+	  tmp/probe.o > tmp/probe.o.S
+'
+
+#	  --start-address=0x100 \
