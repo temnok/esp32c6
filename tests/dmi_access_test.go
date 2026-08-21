@@ -56,3 +56,18 @@ func TestDmcontrolNdmreset(t *testing.T) {
 		assert.Equal(t, 0, conn.Read(dmi.Dmcontrol)>>dmi.DmcontrolNdmreset&1)
 	})
 }
+
+func TestSbaccess(t *testing.T) {
+	defer check.RecoverAndPrintStack(t.Fatal)
+
+	dmi.Session(func(conn *dmi.Conn) {
+		want := 1<<dmi.SbcsSbversion |
+			2<<dmi.SbcsSbaccess |
+			32<<dmi.SbcsSbasize |
+			1<<dmi.SbcsSbaccess32
+
+		got := conn.Read(dmi.Sbcs) &^ (1<<dmi.SbcsSbbusyerror | 1<<dmi.SbcsSbbusy | 7<<dmi.SbcsSberror)
+
+		assert.Equal(t, want, got)
+	})
+}

@@ -61,6 +61,16 @@ func (c *Conn) HartHalt(i int) {
 	}
 }
 
+func (c *Conn) checkAndWaitCommand() {
+	a := c.dmi.Read(dmi.Abstractcs)
+	for ; a>>dmi.AbstractcsBusy&1 == 1; a = c.dmi.Read(dmi.Abstractcs) {
+	}
+
+	if cmderr := a >> dmi.AbstractcsCmderr & 7; cmderr != dmi.CmderrNone {
+		panic(fmt.Errorf("abstract command error: %v", cmderr))
+	}
+}
+
 func (c *Conn) ReadPC() int {
 	return c.ReadCSR(csr.Dpc)
 }
@@ -71,18 +81,11 @@ func (c *Conn) ReadGPR(i int) int {
 
 func (c *Conn) ReadCSR(i int) int {
 	c.dmi.Write(dmi.Command, dmi.CmdtypeAccessRegister<<dmi.CommandCmdtype|
-		2<<dmi.CommandARAarsize|
-		1<<dmi.CommandARTransfer|
-		i<<dmi.CommandARRegno)
+		2<<dmi.CommandAarsize|
+		1<<dmi.CommandTransfer|
+		i<<dmi.CommandRegno)
 
-	a := c.dmi.Read(dmi.Abstractcs)
-	for ; a>>dmi.AbstractcsBusy&1 == 1; a = c.dmi.Read(dmi.Abstractcs) {
-	}
-
-	if cmderr := a >> dmi.AbstractcsCmderr & 7; cmderr != dmi.CmderrNone {
-		panic(fmt.Errorf("abstract command error: %v", cmderr))
-	}
-
+	c.checkAndWaitCommand()
 	return c.dmi.Read(dmi.Data0)
 }
 
@@ -94,16 +97,54 @@ func (c *Conn) WriteCSR(i, val int) {
 	c.dmi.Write(dmi.Data0, val)
 
 	c.dmi.Write(dmi.Command, dmi.CmdtypeAccessRegister<<dmi.CommandCmdtype|
-		1<<dmi.CommandARWrite|
-		2<<dmi.CommandARAarsize|
-		1<<dmi.CommandARTransfer|
-		i<<dmi.CommandARRegno)
+		1<<dmi.CommandWrite|
+		2<<dmi.CommandAarsize|
+		1<<dmi.CommandTransfer|
+		i<<dmi.CommandRegno)
 
-	a := c.dmi.Read(dmi.Abstractcs)
-	for ; a>>dmi.AbstractcsBusy&1 == 1; a = c.dmi.Read(dmi.Abstractcs) {
+	c.checkAndWaitCommand()
+}
+
+func (c *Conn) DataRegisterCount() int {
+	return c.dmi.Read(dmi.Abstractcs) >> dmi.AbstractcsDatacount & 15
+}
+
+func (c *Conn) waitSbcs() int {
+	for {
+		if val := c.dmi.Read(dmi.Sbcs); val&(1<<dmi.SbcsSbbusy) == 0 {
+			if err := val >> dmi.SbcsSberror & 7; err != 0 {
+				panic(fmt.Errorf("bus access error: %v", err))
+			}
+
+			return val
+		}
 	}
+}
 
-	if cmderr := a >> dmi.AbstractcsCmderr & 7; cmderr != dmi.CmderrNone {
-		panic(fmt.Errorf("abstract command error: %v", cmderr))
+func (c *Conn) ReadBus(addr int, mem []int32) {
+	c.dmi.Write(dmi.Sbcs, 2<<dmi.SbcsSbaccess|
+		1<<dmi.SbcsSbautoincrement|
+		1<<dmi.SbcsSbreadonaddr|
+		1<<dmi.SbcsSbreadondata)
+
+	c.dmi.Write(dmi.Sbaddress0, addr)
+
+	for i := range mem {
+		c.waitSbcs()
+
+		mem[i] = int32(c.dmi.Read(dmi.Sbdata0))
+	}
+}
+
+func (c *Conn) WriteBus(addr int, mem []int32) {
+	c.dmi.Write(dmi.Sbcs, 2<<dmi.SbcsSbaccess|
+		1<<dmi.SbcsSbautoincrement)
+
+	c.dmi.Write(dmi.Sbaddress0, addr)
+
+	for _, val := range mem {
+		c.dmi.Write(dmi.Sbdata0, int(val))
+
+		c.waitSbcs()
 	}
 }
