@@ -13,11 +13,12 @@ func TestBusAccess(t *testing.T) {
 	debug.Session(func(conn *debug.Conn) {
 		conn.HartResetAndHalt(0)
 
-		conn.WriteBus(0x4080_0000, []int32{1, 2, 3, 4})
+		data := []uint32{0x12345678, 0x11223344, 0x55667788, 0x87654321}
+		conn.WriteBus(0x4080_0000, data)
 
-		data := make([]int32, 4)
-		conn.ReadBus(0x4080_0000, data)
+		mem := make([]uint32, 4)
+		conn.ReadBus(0x4080_0000, mem)
 
-		assert.Equal(t, []int32{1, 2, 3, 4}, data)
+		assert.Equal(t, data, mem)
 	})
 }

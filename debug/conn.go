@@ -121,7 +121,7 @@ func (c *Conn) waitSbcs() int {
 	}
 }
 
-func (c *Conn) ReadBus(addr int, mem []int32) {
+func (c *Conn) ReadBus(addr int, mem []uint32) {
 	c.dmi.Write(dmi.Sbcs, 2<<dmi.SbcsSbaccess|
 		1<<dmi.SbcsSbautoincrement|
 		1<<dmi.SbcsSbreadonaddr|
@@ -132,11 +132,11 @@ func (c *Conn) ReadBus(addr int, mem []int32) {
 	for i := range mem {
 		c.waitSbcs()
 
-		mem[i] = int32(c.dmi.Read(dmi.Sbdata0))
+		mem[i] = uint32(c.dmi.Read(dmi.Sbdata0))
 	}
 }
 
-func (c *Conn) WriteBus(addr int, mem []int32) {
+func (c *Conn) WriteBus(addr int, mem []uint32) {
 	c.dmi.Write(dmi.Sbcs, 2<<dmi.SbcsSbaccess|
 		1<<dmi.SbcsSbautoincrement)
 
