@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestAsm(t *testing.T) {
+func TestAssemble(t *testing.T) {
 	tests := []struct {
 		input func(*Asm)
 		want  []string
@@ -43,7 +43,7 @@ func TestAsm(t *testing.T) {
 	da, _ := rvda.New(32, rvda.ExtI|rvda.ExtM|rvda.ExtA|rvda.ExtC)
 
 	for _, test := range tests {
-		code := AsmBlock(test.input)
+		code := Assemble(test.input)
 		got := disassemble(da, code)
 
 		if !reflect.DeepEqual(got, test.want) {

@@ -36,31 +36,33 @@ func (asm *Asm) addr(name string, curAddr int) int {
 	return 0
 }
 
-func AsmBlock(block func(asm *Asm)) []uint32 {
+func (asm *Asm) addInstr(opcode int) {
+	op := uint32(opcode)
+	compressed := op&3 != 3
+
+	if asm.curAddr&3 == 0 {
+		asm.code = append(asm.code, op)
+	} else {
+		asm.code[len(asm.code)-1] |= op << 16
+
+		if !compressed {
+			asm.code = append(asm.code, op>>16)
+		}
+	}
+
+	if compressed {
+		asm.curAddr += 2
+	} else {
+		asm.curAddr += 4
+	}
+}
+
+func Assemble(block func(asm *Asm)) []uint32 {
 	asm := &Asm{
 		labelAddr: map[string]int{},
 	}
 
-	asm.RV32IMACNZicsrZifencei = Gen(func(opcode int) {
-		op := uint32(opcode)
-		compressed := op&3 != 3
-
-		if asm.curAddr&3 == 0 {
-			asm.code = append(asm.code, op)
-		} else {
-			asm.code[len(asm.code)-1] |= op << 16
-
-			if !compressed {
-				asm.code = append(asm.code, op>>16)
-			}
-		}
-
-		if compressed {
-			asm.curAddr += 2
-		} else {
-			asm.curAddr += 4
-		}
-	})
+	asm.RV32IMACNZicsrZifencei = Gen(asm.addInstr)
 
 	for {
 		asm.curAddr = 0

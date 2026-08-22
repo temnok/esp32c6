@@ -1,6 +1,8 @@
 package opcode
 
-import "github.com/temnok/esp32c6/isa"
+import (
+	"github.com/temnok/esp32c6/isa"
+)
 
 func Gen(callback func(int)) isa.RV32IMACNZicsrZifencei {
 	return &gen{callback}
