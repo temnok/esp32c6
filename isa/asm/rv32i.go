@@ -1,4 +1,4 @@
-package opcode
+package asm
 
 func (gen *gen) ADD(rd, rs1, rs2 int)  { gen.R(0x00000033, rd, rs1, rs2) }
 func (gen *gen) AND(rd, rs1, rs2 int)  { gen.R(0x00007033, rd, rs1, rs2) }

@@ -1,4 +1,4 @@
-package opcode
+package asm
 
 func (gen *gen) DIV(rd, rs1, rs2 int)    { gen.R(0x02004033, rd, rs1, rs2) }
 func (gen *gen) DIVU(rd, rs1, rs2 int)   { gen.R(0x02005033, rd, rs1, rs2) }

@@ -1,4 +1,4 @@
-package opcode
+package asm
 
 func (gen *gen) AMOADD_W(rd, rs2, rs1 int)  { gen.R(0x0000202F, rd, rs1, rs2) }
 func (gen *gen) AMOAND_W(rd, rs2, rs1 int)  { gen.R(0x6000202F, rd, rs1, rs2) }

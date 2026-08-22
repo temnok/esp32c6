@@ -1,4 +1,4 @@
-package opcode
+package asm
 
 import (
 	"fmt"

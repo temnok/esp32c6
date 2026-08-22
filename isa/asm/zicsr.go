@@ -1,4 +1,4 @@
-package opcode
+package asm
 
 func (gen *gen) CSRRC(rd, csr, rs1 int)  { gen.I(0x00003073, rd, rs1, csr) }
 func (gen *gen) CSRRCI(rd, csr, imm int) { gen.I(0x00007073, rd, imm, csr) }

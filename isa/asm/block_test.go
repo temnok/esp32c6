@@ -1,4 +1,4 @@
-package opcode
+package asm
 
 import (
 	"fmt"
@@ -38,12 +38,37 @@ func TestAssemble(t *testing.T) {
 				"0002 ebreak TODO",
 			},
 		},
+
+		{
+			input: func(asm *Asm) {
+				asm.Label("start")
+				asm.LA(isa.GP, asm.Offset("start"))
+			},
+			want: []string{
+				"0000 auipc gp,0x0",
+			},
+		},
+
+		{
+			input: func(asm *Asm) {
+				asm.Label("start")
+				asm.C_NOP()
+				asm.C_NOP()
+				asm.LA(isa.GP, asm.Offset("start"))
+			},
+			want: []string{
+				"0000 nop",
+				"0002 nop",
+				"0004 auipc gp,0x0",
+				"0008 addi gp,gp,-4",
+			},
+		},
 	}
 
 	da, _ := rvda.New(32, rvda.ExtI|rvda.ExtM|rvda.ExtA|rvda.ExtC)
 
 	for _, test := range tests {
-		code := Assemble(test.input)
+		code := Block(test.input)
 		got := disassemble(da, code)
 
 		if !reflect.DeepEqual(got, test.want) {

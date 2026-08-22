@@ -1,4 +1,4 @@
-package opcode
+package asm
 
 import "github.com/temnok/esp32c6/isa"
 
@@ -36,7 +36,7 @@ func (asm *Asm) addr(name string, curAddr int) int {
 	return 0
 }
 
-func (asm *Asm) addInstr(opcode int) {
+func (asm *Asm) instr(opcode int) {
 	op := uint32(opcode)
 	compressed := op&3 != 3
 
@@ -55,26 +55,4 @@ func (asm *Asm) addInstr(opcode int) {
 	} else {
 		asm.curAddr += 4
 	}
-}
-
-func Assemble(block func(asm *Asm)) []uint32 {
-	asm := &Asm{
-		labelAddr: map[string]int{},
-	}
-
-	asm.RV32IMACNZicsrZifencei = Gen(asm.addInstr)
-
-	for {
-		asm.curAddr = 0
-		asm.code = asm.code[:0]
-		asm.retry = false
-
-		block(asm)
-
-		if !asm.retry {
-			break
-		}
-	}
-
-	return asm.code
 }

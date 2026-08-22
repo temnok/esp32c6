@@ -1,4 +1,4 @@
-package opcode
+package asm
 
 func (gen *gen) C_ADD(rd, rs2 int) { gen.CR(0x9002, rd, rs2) }
 func (gen *gen) C_AND(rd, rs2 int) { gen.CA(0x8C61, rd, rs2) }
