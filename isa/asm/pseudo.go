@@ -14,6 +14,22 @@ func (asm *Asm) LA(r, imm int) {
 	}
 }
 
+func (asm *Asm) LI(r, imm int) {
+	hi, lo := imm>>12, int(int32(imm)<<20>>20)
+	if lo < 0 {
+		hi++
+	}
+
+	if hi != 0 {
+		asm.LUI(r, hi)
+		if lo != 0 {
+			asm.ADDI(r, r, lo)
+		}
+	} else {
+		asm.ADDI(r, isa.Zero, lo)
+	}
+}
+
 func (asm *Asm) BEQZ(r, imm int)      { asm.BEQ(r, isa.Zero, imm) }
 func (asm *Asm) BGEZ(r, imm int)      { asm.BGE(r, isa.Zero, imm) }
 func (asm *Asm) BGT(ra, rb, imm int)  { asm.BLT(rb, ra, imm) }

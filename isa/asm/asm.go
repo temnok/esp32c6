@@ -1,6 +1,9 @@
 package asm
 
-import "github.com/temnok/esp32c6/isa"
+import (
+	"fmt"
+	"github.com/temnok/esp32c6/isa"
+)
 
 type Asm struct {
 	isa.RV32IMACNZicsrZifencei
@@ -11,25 +14,29 @@ type Asm struct {
 	retry     bool
 }
 
-func (asm *Asm) Label(name string) {
-	if addr, known := asm.labelAddr[name]; known && addr != asm.curAddr {
+func (asm *Asm) Label(label string) {
+	if addr, known := asm.labelAddr[label]; known && addr != asm.curAddr {
 		asm.retry = true
 	}
 
-	asm.labelAddr[name] = asm.curAddr
+	asm.labelAddr[label] = asm.curAddr
 }
 
-func (asm *Asm) Address(name string) int {
-	return asm.addr(name, 0)
+func (asm *Asm) Address(label string) int {
+	return asm.addr(label, 0)
 }
 
-func (asm *Asm) Offset(name string) int {
-	return asm.addr(name, asm.curAddr)
+func (asm *Asm) Offset(label string) int {
+	return asm.addr(label, asm.curAddr)
 }
 
-func (asm *Asm) addr(name string, curAddr int) int {
-	if addr, known := asm.labelAddr[name]; known {
+func (asm *Asm) addr(label string, curAddr int) int {
+	if addr, known := asm.labelAddr[label]; known {
 		return addr - curAddr
+	}
+
+	if asm.retry {
+		panic(fmt.Errorf("unknown label: %v", label))
 	}
 
 	asm.retry = true

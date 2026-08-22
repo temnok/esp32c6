@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestAssemble(t *testing.T) {
+func TestBlock(t *testing.T) {
 	tests := []struct {
 		input func(*Asm)
 		want  []string
@@ -51,16 +51,22 @@ func TestAssemble(t *testing.T) {
 
 		{
 			input: func(asm *Asm) {
-				asm.Label("start")
 				asm.C_NOP()
+				asm.Label("start")
+
 				asm.C_NOP()
 				asm.LA(isa.GP, asm.Offset("start"))
+				asm.LI(isa.A0, asm.Address("start"))
+				asm.LI(isa.A1, 0x12345678)
 			},
 			want: []string{
 				"0000 nop",
 				"0002 nop",
 				"0004 auipc gp,0x0",
-				"0008 addi gp,gp,-4",
+				"0008 addi gp,gp,-2",
+				"000C li a0,2",
+				"0010 lui a1,0x12345",
+				"0014 addi a1,a1,1656",
 			},
 		},
 	}
