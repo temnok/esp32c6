@@ -13,9 +13,9 @@ func (gen *gen) C_ADDI4SPN(rd, imm int) { gen.CIW(0x0000, rd, imm) }
 func (gen *gen) C_ANDI(rd, imm int)     { gen.CB(0x8801, rd, imm) }
 func (gen *gen) C_LI(rd, imm int)       { gen.CI(0x4001, rd, imm) }
 func (gen *gen) C_LUI(rd, imm int)      { gen.CI(0x6001, rd, imm) }
-func (gen *gen) C_SLLI(rd, imm int)     { gen.CI(0x0002, rd, imm) }
-func (gen *gen) C_SRAI(rd, imm int)     { gen.CB(0x8401, rd, imm) }
-func (gen *gen) C_SRLI(rd, imm int)     { gen.CB(0x8001, rd, imm) }
+func (gen *gen) C_SLLI(rd, imm int)     { gen.CIsl(0x0002, rd, imm) }
+func (gen *gen) C_SRAI(rd, imm int)     { gen.CBsr(0x8401, rd, imm) }
+func (gen *gen) C_SRLI(rd, imm int)     { gen.CBsr(0x8001, rd, imm) }
 
 func (gen *gen) C_BEQZ(rd, imm int) { gen.CB2(0xC001, rd, imm) }
 func (gen *gen) C_BNEZ(rd, imm int) { gen.CB2(0xE001, rd, imm) }

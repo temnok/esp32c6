@@ -29,6 +29,12 @@ func (gen *gen) I(op, rd, rs1, imm int) {
 	gen.callback(imm&0xFFF<<20 | rs1&31<<15 | rd&31<<7 | op)
 }
 
+func (gen *gen) Ish(op, rd, rs1, imm int) {
+	assertRange(imm, 0, 32)
+
+	gen.I(op, rd, rs1, imm)
+}
+
 func (gen *gen) S(op, rs2, rs1, imm int) {
 	assertRange(rs1, 0, 32)
 	assertRange(rs2, 0, 32)
@@ -84,6 +90,12 @@ func (gen *gen) CI(op, rd, imm int) {
 	gen.callback(imm | rd&31<<7 | op)
 }
 
+func (gen *gen) CIsl(op, rd, imm int) {
+	assertRange(imm, 0, 32)
+
+	gen.CI(op, rd, imm)
+}
+
 func (gen *gen) CI4(op, rd, imm int) {
 	assertRange(rd, 0, 32)
 	assertRange(imm, 0, 0x100)
@@ -115,6 +127,12 @@ func (gen *gen) CB(op, rd, imm int) {
 
 	imm = imm>>5&1<<12 | imm&31<<2
 	gen.callback(imm | rd&7<<7 | op)
+}
+
+func (gen *gen) CBsr(op, rd, imm int) {
+	assertRange(imm, 0, 32)
+
+	gen.CB(op, rd, imm)
 }
 
 func (gen *gen) CB2(op, rs1, imm int) {

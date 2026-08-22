@@ -16,11 +16,11 @@ func (gen *gen) ANDI(rd, rs1, imm int)  { gen.I(0x00007013, rd, rs1, imm) }
 func (gen *gen) AUIPC(rd, imm int)      { gen.U(0x00000017, rd, imm) }
 func (gen *gen) LUI(rd, imm int)        { gen.U(0x00000037, rd, imm) }
 func (gen *gen) ORI(rd, rs1, imm int)   { gen.I(0x00006013, rd, rs1, imm) }
-func (gen *gen) SLLI(rd, rs1, imm int)  { gen.I(0x00001013, rd, rs1, imm&31) }
+func (gen *gen) SLLI(rd, rs1, imm int)  { gen.Ish(0x00001013, rd, rs1, imm) }
 func (gen *gen) SLTI(rd, rs1, imm int)  { gen.I(0x00002013, rd, rs1, imm) }
 func (gen *gen) SLTIU(rd, rs1, imm int) { gen.I(0x00003013, rd, rs1, imm) }
-func (gen *gen) SRAI(rd, rs1, imm int)  { gen.I(0x40005013, rd, rs1, imm&31) }
-func (gen *gen) SRLI(rd, rs1, imm int)  { gen.I(0x00005013, rd, rs1, imm&31) }
+func (gen *gen) SRAI(rd, rs1, imm int)  { gen.Ish(0x40005013, rd, rs1, imm) }
+func (gen *gen) SRLI(rd, rs1, imm int)  { gen.Ish(0x00005013, rd, rs1, imm) }
 func (gen *gen) XORI(rd, rs1, imm int)  { gen.I(0x00004013, rd, rs1, imm) }
 
 func (gen *gen) BEQ(rs1, rs2, imm int)  { gen.B(0x00000063, rs1, rs2, imm) }
