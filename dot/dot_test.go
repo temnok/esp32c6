@@ -10,16 +10,14 @@ import (
 )
 
 func TestBlock(t *testing.T) {
-	dot := new(Dot)
-	asmp := &asm.Pseudo{asm.Asm(dot.Instr)}
-	asm := asm.Asm(dot.Instr)
-
 	tests := []struct {
-		input func()
+		input func(*Dot)
 		want  []string
 	}{
 		{
-			input: func() {
+			input: func(dot *Dot) {
+				asm := &asm.Pseudo{asm.Asm(dot.Instr)}
+
 				asm.AUIPC(isa.GP, 0)
 				asm.C_MV(isa.A0, isa.GP)
 				asm.C_EBREAK()
@@ -32,7 +30,9 @@ func TestBlock(t *testing.T) {
 		},
 
 		{
-			input: func() {
+			input: func(dot *Dot) {
+				asm := &asm.Pseudo{asm.Asm(dot.Instr)}
+
 				asm.C_J(dot.Offset("next"))
 				dot.Label("next")
 				asm.C_EBREAK()
@@ -44,9 +44,11 @@ func TestBlock(t *testing.T) {
 		},
 
 		{
-			input: func() {
+			input: func(dot *Dot) {
+				asm := &asm.Pseudo{asm.Asm(dot.Instr)}
+
 				dot.Label("start")
-				asmp.LA(isa.GP, dot.Offset("start"))
+				asm.LA(isa.GP, dot.Offset("start"))
 			},
 			want: []string{
 				"0000 auipc gp,0x0",
@@ -54,13 +56,15 @@ func TestBlock(t *testing.T) {
 		},
 
 		{
-			input: func() {
+			input: func(dot *Dot) {
+				asm := &asm.Pseudo{asm.Asm(dot.Instr)}
+
 				asm.C_NOP()
 				dot.Label("start")
 				asm.C_NOP()
-				asmp.LA(isa.GP, dot.Offset("start"))
-				asmp.LI(isa.A0, dot.Address("start"))
-				asmp.LI(isa.A1, 0x12345678)
+				asm.LA(isa.GP, dot.Offset("start"))
+				asm.LI(isa.A0, dot.Address("start"))
+				asm.LI(isa.A1, 0x12345678)
 			},
 			want: []string{
 				"0000 nop",
@@ -77,8 +81,8 @@ func TestBlock(t *testing.T) {
 	da, _ := rvda.New(32, rvda.ExtI|rvda.ExtM|rvda.ExtA|rvda.ExtC)
 
 	for _, test := range tests {
-		dot.Block(test.input)
-		got := disassemble(da, dot.Code())
+		code := Block(test.input)
+		got := disassemble(da, code)
 
 		if !reflect.DeepEqual(got, test.want) {
 			t.Fatalf("\nwant %#v\n got %#v", test.want, got)

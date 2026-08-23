@@ -3,7 +3,7 @@ package asm
 import "github.com/temnok/esp32c6/isa"
 
 type Pseudo struct {
-	isa.RV32I
+	isa.RV32IMACNZicsrZifencei
 }
 
 func (asm *Pseudo) LA(r, imm int) {

@@ -70,23 +70,3 @@ func (dot *Dot) Instr(opcode int) {
 
 	dot.curAddr = len(dot.code)
 }
-
-func (dot *Dot) Block(block func()) {
-	dot.labelAddr = map[string]int{}
-
-	for {
-		dot.curAddr = 0
-		dot.code = dot.code[:0]
-		dot.retry = false
-
-		block()
-
-		if !dot.retry {
-			break
-		}
-	}
-}
-
-func (dot *Dot) Code() []byte {
-	return dot.code
-}
