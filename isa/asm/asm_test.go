@@ -166,13 +166,13 @@ var tests = map[string]func(rv){
 	"fence.i": func(op rv) { op.FENCE_I() },
 }
 
-func TestGen(t *testing.T) {
+func TestAsm(t *testing.T) {
 	da, _ := rvda.New(32, rvda.ExtI|rvda.ExtM|rvda.ExtA|rvda.ExtC)
 
 	for want, op := range tests {
 		var got string
 
-		op(Gen(func(opcode int) {
+		op(Asm(func(opcode int) {
 			got = da.Disassemble(0, uint(opcode)).Assembly
 		}))
 
