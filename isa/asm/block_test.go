@@ -83,30 +83,20 @@ func TestBlock(t *testing.T) {
 	}
 }
 
-func disassemble(da *rvda.ISA, code []uint32) []string {
+func disassemble(da *rvda.ISA, code []byte) []string {
 	var disasm []string
 
-	for addr := 0; addr < 4*len(code); addr += 2 {
-		op := code[addr>>2]
+	for i := 0; i+2 <= len(code); i += 2 {
+		addr := uint(i)
 
-		var compressed bool
-		if addr&3 == 0 {
-			if compressed = op&3 != 3; compressed {
-				op &= 0xFFFF
-			}
-		} else {
-			op >>= 16
-			if compressed = op&3 != 3; !compressed {
-				op |= code[addr>>2+1] & 0xFFFF << 16
-			}
+		op := int(code[i+1])<<8 | int(code[i])
+		if op&3 == 3 {
+			op |= int(code[i+3])<<24 | int(code[i+2])<<16
+			i += 2
 		}
 
-		instr := da.Disassemble(uint(addr), uint(op))
+		instr := da.Disassemble(addr, uint(op))
 		disasm = append(disasm, fmt.Sprintf("%04X %v", addr, instr.Assembly))
-
-		if !compressed {
-			addr += 2
-		}
 	}
 
 	return disasm

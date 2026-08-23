@@ -1,6 +1,6 @@
 package asm
 
-func Block(block func(asm *Asm)) []uint32 {
+func Block(block func(asm *Asm)) []byte {
 	asm := &Asm{
 		labelAddr: map[string]int{},
 	}

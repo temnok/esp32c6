@@ -10,8 +10,20 @@ type Asm struct {
 
 	curAddr   int
 	labelAddr map[string]int
-	code      []uint32
+	code      []byte
 	retry     bool
+}
+
+func (asm *Asm) Align(nBytes int) {
+	mod := asm.curAddr % nBytes
+
+	if mod != 0 {
+		asm.curAddr += nBytes - mod
+	}
+}
+
+func (asm *Asm) Skip(nBytes int) {
+	asm.curAddr += nBytes
 }
 
 func (asm *Asm) Label(label string) {
@@ -43,23 +55,21 @@ func (asm *Asm) addr(label string, curAddr int) int {
 	return 0
 }
 
+func (asm *Asm) pad() {
+	for len(asm.code) < asm.curAddr {
+		asm.code = append(asm.code, 0)
+	}
+}
+
 func (asm *Asm) instr(opcode int) {
-	op := uint32(opcode)
-	compressed := op&3 != 3
+	asm.Align(2)
+	asm.pad()
 
-	if asm.curAddr&3 == 0 {
-		asm.code = append(asm.code, op)
-	} else {
-		asm.code[len(asm.code)-1] |= op << 16
+	asm.code = append(asm.code, byte(opcode), byte(opcode>>8))
 
-		if !compressed {
-			asm.code = append(asm.code, op>>16)
-		}
+	if opcode&3 == 3 {
+		asm.code = append(asm.code, byte(opcode>>16), byte(opcode>>24))
 	}
 
-	if compressed {
-		asm.curAddr += 2
-	} else {
-		asm.curAddr += 4
-	}
+	asm.curAddr = len(asm.code)
 }
