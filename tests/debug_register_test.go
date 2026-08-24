@@ -15,13 +15,13 @@ func TestRegistersAfterReset(t *testing.T) {
 	debug.Session(func(conn *debug.Conn) {
 		conn.HartResetAndHalt(0)
 
-		assert.Equal(t, 0, conn.ReadCSR(csr.Ustatus)) // ustatus
-		assert.Equal(t, 0, conn.ReadCSR(csr.Uie))     // uie
-		assert.Equal(t, 1, conn.ReadCSR(csr.Utvec))   // utvec
-		//assert.Equal(t, 0, conn.ReadCSR(csr.Uscratch)) // uscratch ???
-		assert.Equal(t, 0, conn.ReadCSR(csr.Uepc))   // uepc
-		assert.Equal(t, 0, conn.ReadCSR(csr.Ucause)) // ucause
-		assert.Equal(t, 0, conn.ReadCSR(csr.Uip))    // uip
+		assert.Equal(t, 0, conn.ReadCSR(csr.Ustatus))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Uie))
+		assert.Equal(t, 1, conn.ReadCSR(csr.Utvec))
+		//assert.Equal(t, 0, conn.ReadCSR(csr.Uscratch)) // ???
+		assert.Equal(t, 0, conn.ReadCSR(csr.Uepc))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Ucause))
+		assert.Equal(t, 0, conn.ReadCSR(csr.Uip))
 
 		assert.Equal(t, 1<<csr.MstatusTW|3<<csr.MstatusMPP, conn.ReadCSR(csr.Mstatus))
 		misa := 1<<30 | 1<<('n'-'a') | 1<<('u'-'a') | 1<<('x'-'a') |
@@ -35,6 +35,8 @@ func TestRegistersAfterReset(t *testing.T) {
 		assert.Equal(t, 0, conn.ReadCSR(csr.Mcause))
 		assert.Equal(t, 0, conn.ReadCSR(csr.Mtval))
 		assert.Equal(t, 0, conn.ReadCSR(csr.Mip))
+
+		assert.Equal(t, 3<<csr.DcsrCause|3<<csr.DcsrPrv, conn.ReadCSR(csr.Dcsr))
 
 		assert.Equal(t, 0x612, conn.ReadCSR(csr.Mvendorid))
 		assert.Equal(t, 0x80000002, conn.ReadCSR(csr.Marchid))

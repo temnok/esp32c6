@@ -121,30 +121,62 @@ func (c *Conn) waitSbcs() int {
 	}
 }
 
-func (c *Conn) ReadBus(addr int, mem []uint32) {
+func (c *Conn) ReadMem(addr int, mem []byte) {
 	c.dmi.Write(dmi.Sbcs, 2<<dmi.SbcsSbaccess|
 		1<<dmi.SbcsSbautoincrement|
 		1<<dmi.SbcsSbreadonaddr|
 		1<<dmi.SbcsSbreadondata)
 
-	c.dmi.Write(dmi.Sbaddress0, addr)
+	c.dmi.Write(dmi.Sbaddress0, addr&^3)
 
-	for i := range mem {
+	for i := -(addr & 3); i < len(mem); i += 4 {
 		c.waitSbcs()
+		val := c.dmi.Read(dmi.Sbdata0)
 
-		mem[i] = uint32(c.dmi.Read(dmi.Sbdata0))
+		if i >= 0 {
+			mem[i] = byte(val)
+		}
+
+		if i+1 >= 0 && i+1 < len(mem) {
+			mem[i+1] = byte(val >> 8)
+		}
+
+		if i+2 >= 0 && i+2 < len(mem) {
+			mem[i+2] = byte(val >> 16)
+		}
+
+		if i+3 < len(mem) {
+			mem[i+3] = byte(val >> 24)
+		}
 	}
 }
 
-func (c *Conn) WriteBus(addr int, mem []uint32) {
+func (c *Conn) WriteMem(addr int, mem []byte) {
 	c.dmi.Write(dmi.Sbcs, 2<<dmi.SbcsSbaccess|
 		1<<dmi.SbcsSbautoincrement)
 
-	c.dmi.Write(dmi.Sbaddress0, addr)
+	c.dmi.Write(dmi.Sbaddress0, addr&^3)
 
-	for _, val := range mem {
-		c.dmi.Write(dmi.Sbdata0, int(val))
+	for i := -(addr & 3); i < len(mem); i += 4 {
+		val := 0
 
+		if i >= 0 {
+			val = int(mem[i])
+		}
+
+		if i+1 >= 0 && i+1 < len(mem) {
+			val |= int(mem[i+1]) << 8
+		}
+
+		if i+2 >= 0 && i+2 < len(mem) {
+			val |= int(mem[i+2]) << 16
+		}
+
+		if i+3 < len(mem) {
+			val |= int(mem[i+3]) << 24
+		}
+
+		c.dmi.Write(dmi.Sbdata0, val)
 		c.waitSbcs()
 	}
 }

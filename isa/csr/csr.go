@@ -104,4 +104,10 @@ const (
 const (
 	MstatusMPP = 11
 	MstatusTW  = 21
+
+	DcsrPrv       = 0
+	DcsrCause     = 6
+	DcsrXdebugver = 28
+
+	MpcerCycle = 0
 )

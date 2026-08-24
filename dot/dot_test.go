@@ -9,15 +9,16 @@ import (
 	"testing"
 )
 
-func TestBlock(t *testing.T) {
+func TestDot(t *testing.T) {
+	dot := new(Dot)
+	asm := &asm.Pseudo{asm.Asm(dot.Instr)}
+
 	tests := []struct {
-		input func(*Dot)
+		input func()
 		want  []string
 	}{
 		{
-			input: func(dot *Dot) {
-				asm := &asm.Pseudo{asm.Asm(dot.Instr)}
-
+			input: func() {
 				asm.AUIPC(isa.GP, 0)
 				asm.C_MV(isa.A0, isa.GP)
 				asm.C_EBREAK()
@@ -30,10 +31,9 @@ func TestBlock(t *testing.T) {
 		},
 
 		{
-			input: func(dot *Dot) {
-				asm := &asm.Pseudo{asm.Asm(dot.Instr)}
-
+			input: func() {
 				asm.C_J(dot.Offset("next"))
+
 				dot.Label("next")
 				asm.C_EBREAK()
 			},
@@ -44,9 +44,7 @@ func TestBlock(t *testing.T) {
 		},
 
 		{
-			input: func(dot *Dot) {
-				asm := &asm.Pseudo{asm.Asm(dot.Instr)}
-
+			input: func() {
 				dot.Label("start")
 				asm.LA(isa.GP, dot.Offset("start"))
 			},
@@ -56,10 +54,9 @@ func TestBlock(t *testing.T) {
 		},
 
 		{
-			input: func(dot *Dot) {
-				asm := &asm.Pseudo{asm.Asm(dot.Instr)}
-
+			input: func() {
 				asm.C_NOP()
+
 				dot.Label("start")
 				asm.C_NOP()
 				asm.LA(isa.GP, dot.Offset("start"))
@@ -81,8 +78,8 @@ func TestBlock(t *testing.T) {
 	da, _ := rvda.New(32, rvda.ExtI|rvda.ExtM|rvda.ExtA|rvda.ExtC)
 
 	for _, test := range tests {
-		code := Block(test.input)
-		got := disassemble(da, code)
+		dot.Compile(test.input)
+		got := disassemble(da, dot.Code)
 
 		if !reflect.DeepEqual(got, test.want) {
 			t.Fatalf("\nwant %#v\n got %#v", test.want, got)
