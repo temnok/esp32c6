@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+set -e
+cd $(dirname "$0")
+
+mkdir -p tmp
+
+riscv64-unknown-elf-gcc \
+  -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
+  -fno-ident \
+  -Os -g \
+  -T probe.ld \
+  -o tmp/probe.elf probe.c
+
+riscv64-unknown-elf-objdump \
+  -d -l -S \
+  tmp/probe.elf > tmp/probe.elf.S
