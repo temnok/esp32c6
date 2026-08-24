@@ -10,13 +10,14 @@ type Dot struct {
 	Code      []byte
 
 	curAddr int
+	try     int
 	retry   bool
 }
 
 func (dot *Dot) Compile(block func()) {
 	dot.LabelAddr = map[string]int{}
 
-	for dot.retry = true; dot.retry; {
+	for dot.try, dot.retry = 0, true; dot.retry; dot.try++ {
 		dot.retry = false
 		dot.curAddr = dot.StartAddr
 		dot.Code = dot.Code[:0]
@@ -46,20 +47,29 @@ func (dot *Dot) Label(label string) {
 }
 
 func (dot *Dot) Address(label string) int {
-	if addr, known := dot.LabelAddr[label]; known {
-		return addr
+	addr, _ := dot.address(label)
+	return addr
+}
+
+func (dot *Dot) Offset(label string) int {
+	if addr, ok := dot.address(label); ok {
+		return addr - dot.curAddr
 	}
 
-	if dot.retry {
+	return 0
+}
+
+func (dot *Dot) address(label string) (int, bool) {
+	if addr, known := dot.LabelAddr[label]; known {
+		return addr, true
+	}
+
+	if dot.try > 0 {
 		panic(fmt.Errorf("unknown label: %v", label))
 	}
 
 	dot.retry = true
-	return 0
-}
-
-func (dot *Dot) Offset(label string) int {
-	return dot.Address(label) - dot.curAddr
+	return 0, false
 }
 
 func (dot *Dot) pad() {
@@ -79,4 +89,14 @@ func (dot *Dot) Instr(opcode int) {
 	}
 
 	dot.curAddr = dot.StartAddr + len(dot.Code)
+}
+
+func (dot *Dot) LabelByAddr(addr int) string {
+	for l, a := range dot.LabelAddr {
+		if a == addr {
+			return l
+		}
+	}
+
+	return ""
 }

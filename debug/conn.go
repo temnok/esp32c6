@@ -45,7 +45,19 @@ func (c *Conn) HartResetAndHalt(i int) {
 	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
 		1<<dmi.DmcontrolDmactive)
 
-	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAnyhalted&1 == 0 {
+	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAllhalted&1 == 0 {
+	}
+}
+
+func (c *Conn) HartResumeAndWaitForHalt(i int) {
+	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
+		1<<dmi.DmcontrolResumereq|
+		1<<dmi.DmcontrolDmactive)
+
+	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAllresumeack&1 == 0 {
+	}
+
+	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAllhalted&1 == 0 {
 	}
 }
 
@@ -57,7 +69,7 @@ func (c *Conn) HartHalt(i int) {
 	c.dmi.Write(dmi.Dmcontrol, i<<dmi.DmcontrolHartsello|
 		1<<dmi.DmcontrolDmactive)
 
-	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAnyhalted&1 == 0 {
+	for c.dmi.Read(dmi.Dmstatus)>>dmi.DmstatusAllhalted&1 == 0 {
 	}
 }
 

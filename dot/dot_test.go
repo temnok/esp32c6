@@ -10,8 +10,8 @@ import (
 )
 
 func TestDot(t *testing.T) {
-	dot := new(Dot)
-	asm := &asm.Pseudo{asm.Asm(dot.Instr)}
+	d := new(Dot)
+	asm := asm.AsmWithPseudo(d.Instr)
 
 	tests := []struct {
 		input func()
@@ -32,9 +32,9 @@ func TestDot(t *testing.T) {
 
 		{
 			input: func() {
-				asm.C_J(dot.Offset("next"))
+				asm.C_J(d.Offset("next"))
 
-				dot.Label("next")
+				d.Label("next")
 				asm.C_EBREAK()
 			},
 			want: []string{
@@ -45,8 +45,8 @@ func TestDot(t *testing.T) {
 
 		{
 			input: func() {
-				dot.Label("start")
-				asm.LA(isa.GP, dot.Offset("start"))
+				d.Label("start")
+				asm.LA(isa.GP, d.Offset("start"))
 			},
 			want: []string{
 				"0000 auipc gp,0x0",
@@ -57,10 +57,10 @@ func TestDot(t *testing.T) {
 			input: func() {
 				asm.C_NOP()
 
-				dot.Label("start")
+				d.Label("start")
 				asm.C_NOP()
-				asm.LA(isa.GP, dot.Offset("start"))
-				asm.LI(isa.A0, dot.Address("start"))
+				asm.LA(isa.GP, d.Offset("start"))
+				asm.LI(isa.A0, d.Address("start"))
 				asm.LI(isa.A1, 0x12345678)
 			},
 			want: []string{
@@ -73,13 +73,23 @@ func TestDot(t *testing.T) {
 				"0014 addi a1,a1,1656",
 			},
 		},
+
+		{
+			input: func() {
+				d.Label("loop")
+				asm.J(d.Offset("loop"))
+			},
+			want: []string{
+				"0000 j 0",
+			},
+		},
 	}
 
 	da, _ := rvda.New(32, rvda.ExtI|rvda.ExtM|rvda.ExtA|rvda.ExtC)
 
 	for _, test := range tests {
-		dot.Compile(test.input)
-		got := disassemble(da, dot.Code)
+		d.Compile(test.input)
+		got := disassemble(da, d.Code)
 
 		if !reflect.DeepEqual(got, test.want) {
 			t.Fatalf("\nwant %#v\n got %#v", test.want, got)

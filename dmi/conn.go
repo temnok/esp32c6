@@ -23,7 +23,7 @@ func (conn *Conn) initialize() {
 }
 
 func (c *Conn) Read(addr int) int {
-	val := c.tap.WriteAndReadDR(41, addr<<34|1, 3)
+	val := c.tap.WriteAndReadDR(41, addr<<34|1, 4)
 	a, d, op := val>>34, int(uint32(val>>2)), val&3
 
 	if op != 0 {

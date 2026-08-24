@@ -9,7 +9,7 @@ type Pseudo struct {
 func (asm *Pseudo) LA(r, imm int) {
 	hi, lo := imm>>12, int(int32(imm)<<20>>20)
 	if lo < 0 {
-		hi++
+		hi = (hi + 1) & 0xFFFFF
 	}
 
 	asm.AUIPC(r, hi)
@@ -21,7 +21,7 @@ func (asm *Pseudo) LA(r, imm int) {
 func (asm *Pseudo) LI(r, imm int) {
 	hi, lo := imm>>12, int(int32(imm)<<20>>20)
 	if lo < 0 {
-		hi++
+		hi = (hi + 1) & 0xFFFFF
 	}
 
 	if hi != 0 {
@@ -53,3 +53,11 @@ func (asm *Pseudo) SEQZ(rd, rs int)      { asm.SLTIU(rd, rs, 1) }
 func (asm *Pseudo) SGTZ(rd, rs int)      { asm.SLT(rd, isa.Zero, rs) }
 func (asm *Pseudo) SLTZ(rd, rs int)      { asm.SLT(rd, rs, isa.Zero) }
 func (asm *Pseudo) SNEZ(rd, rs int)      { asm.SLTU(rd, isa.Zero, rs) }
+
+func (asm *Pseudo) CSRC(csr, rs int)   { asm.CSRRC(isa.Zero, csr, rs) }
+func (asm *Pseudo) CSRCI(csr, imm int) { asm.CSRRCI(isa.Zero, csr, imm) }
+func (asm *Pseudo) CSRR(rd, csr int)   { asm.CSRRS(rd, csr, isa.Zero) }
+func (asm *Pseudo) CSRS(csr, rs int)   { asm.CSRRS(isa.Zero, csr, rs) }
+func (asm *Pseudo) CSRSI(csr, imm int) { asm.CSRRSI(isa.Zero, csr, imm) }
+func (asm *Pseudo) CSRW(csr, rs int)   { asm.CSRRW(isa.Zero, csr, rs) }
+func (asm *Pseudo) CSRWI(csr, imm int) { asm.CSRRWI(isa.Zero, csr, imm) }

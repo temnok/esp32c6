@@ -9,6 +9,10 @@ func Asm(instr func(int)) isa.RV32IMACNZicsrZifencei {
 	return &asm{instr}
 }
 
+func AsmWithPseudo(instr func(int)) *Pseudo {
+	return &Pseudo{Asm(instr)}
+}
+
 type asm struct {
 	instr func(int)
 }
@@ -24,7 +28,7 @@ func (asm *asm) R(op, rd, rs1, rs2 int) {
 func (asm *asm) I(op, rd, rs1, imm int) {
 	assertRange(rd, 0, 32)
 	assertRange(rs1, 0, 32)
-	assertRange(imm, -0x800, 0x800)
+	assertRange(imm, -0x800, 0x1000) // 0x1000 for CSR
 
 	asm.instr(imm&0xFFF<<20 | rs1&31<<15 | rd&31<<7 | op)
 }

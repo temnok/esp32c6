@@ -102,12 +102,15 @@ const (
 )
 
 const (
+	MstatusUIE = 0
+	MstatusMIE = 1
 	MstatusMPP = 11
 	MstatusTW  = 21
 
-	DcsrPrv       = 0
-	DcsrCause     = 6
-	DcsrXdebugver = 28
+	DcsrPrv     = 0
+	DcsrCause   = 6
+	DcsrEbreaku = 12
+	DcsrEbreakm = 15
 
 	MpcerCycle = 0
 )
