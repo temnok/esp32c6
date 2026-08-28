@@ -7,10 +7,12 @@ mkdir -p tmp
 riscv64-unknown-elf-gcc \
   -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
   -fno-ident \
-  -Os -g \
+  -Oz -g \
   -T probe.ld \
+  -Wl,--gc-sections \
   -o tmp/probe.elf probe.c
 
 riscv64-unknown-elf-objdump \
   -d -l -S \
+  -s -j .srodata -j .text \
   tmp/probe.elf > tmp/probe.elf.S

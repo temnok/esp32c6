@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"github.com/stretchr/testify/assert"
 	"github.com/temnok/esp32c6/check"
 	"github.com/temnok/esp32c6/debug"
 	"github.com/temnok/esp32c6/dot"
@@ -26,9 +25,9 @@ func TestPerformance(t *testing.T) {
 			block()
 
 			asm.CSRR(isa.T1, csr.Mpccr)
-			asm.SUB(isa.T0, isa.T1, isa.T0)
+			asm.SUB(isa.A0, isa.T1, isa.T0)
 			asm.LI(isa.T1, expectedCycles)
-			asm.BEQ(isa.T0, isa.T1, d.Offset(testName+"_ok"))
+			asm.BEQ(isa.A0, isa.T1, d.Offset(testName+"_ok"))
 
 			d.Label(testName + "_fail")
 			asm.C_EBREAK()
@@ -63,6 +62,13 @@ func TestPerformance(t *testing.T) {
 				}
 			})
 
+			assertPerf("clearmem", 2+512, func() {
+				asm.LI(isa.A0, 0x4080_1000)
+				for i := range 512 {
+					asm.SW(isa.Zero, isa.A0, i*4)
+				}
+			})
+
 			asm.C_NOP()
 			d.Label("normal_exit")
 			asm.C_EBREAK()
@@ -79,7 +85,9 @@ func TestPerformance(t *testing.T) {
 
 		conn.HartResumeAndWaitForHalt(0)
 
-		//fmt.Println(conn.ReadGPR(isa.T0))
-		assert.Equal(t, "normal_exit", d.LabelByAddr(conn.ReadCSR(csr.Dpc)))
+		exitLabel := d.LabelByAddr(conn.ReadCSR(csr.Dpc))
+		if exitLabel != "normal_exit" {
+			t.Fatalf("%v, A0=%v", exitLabel, conn.ReadGPR(isa.A0))
+		}
 	})
 }

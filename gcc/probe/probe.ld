@@ -11,6 +11,5 @@ SECTIONS
     {
         *(.text._start)
         *(.text)
-        *(.rodata)
     } > RAM
 }
