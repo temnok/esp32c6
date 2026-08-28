@@ -12,4 +12,9 @@ SECTIONS
         *(.text._start)
         *(.text)
     } > RAM
+
+    .data :
+    {
+        *(.data)
+    } > RAM
 }

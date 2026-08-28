@@ -9,10 +9,10 @@ riscv64-unknown-elf-gcc \
   -fno-ident \
   -Oz -g \
   -T probe.ld \
-  -Wl,--gc-sections \
+  -Wl,--gc-sections,--no-warn-rwx-segments \
   -o tmp/probe.elf probe.c
 
 riscv64-unknown-elf-objdump \
   -d -l -S \
-  -s -j .srodata -j .text \
+  -s -j .text -j .srodata -j .data \
   tmp/probe.elf > tmp/probe.elf.S
