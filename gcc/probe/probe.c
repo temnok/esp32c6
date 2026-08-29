@@ -12,10 +12,6 @@ void _vectors() {
     );
 }
 
-void f(int *p) {
-    fmt_int(sys_print, *p);
-}
-
 __attribute__((section(".text._start")))
 void _start() {
     fmt_str(sys_print, "Hello, world!\n");
@@ -25,10 +21,10 @@ void _start() {
 
 __attribute__ ((interrupt))
 void trap_handler() {
-    unsigned cause = csr_read(csr_mcause);
-
-    fmt_str(sys_print, "\n\nTrap, cause 0x");
-    fmt_unsigned_hex(sys_print, cause);
+    fmt_str(sys_print, "\nTrap: mcause=0x");
+    fmt_unsigned_hex(sys_print, csr_read(csr_mcause));
+    fmt_str(sys_print, ", mepc=0x");
+    fmt_unsigned_hex(sys_print, csr_read(csr_mepc));
     fmt_str(sys_print, "\n");
 
     sys_exit();
