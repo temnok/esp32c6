@@ -4,15 +4,20 @@ cd $(dirname "$0")
 
 mkdir -p tmp
 
-riscv64-unknown-elf-gcc \
-  -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
+riscv64-unknown-elf-gcc -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
   -fno-ident \
   -Oz -g \
   -T probe.ld \
+  -ffunction-sections -fdata-sections \
   -Wl,--gc-sections,--no-warn-rwx-segments \
-  -o tmp/probe.elf probe.c
+  -o tmp/probe.elf *.c
 
 riscv64-unknown-elf-objdump \
-  -d -l -S \
-  -s -j .text -j .srodata -j .data \
+  --disassemble --line-numbers --source \
+  --full-contents --section=.text --section=.rodata \
   tmp/probe.elf > tmp/probe.elf.S
+
+riscv64-unknown-elf-objcopy \
+  --output-target=binary \
+  --only-section=.text* --only-section=.rodata* --only-section=.rodata* \
+  tmp/probe.elf tmp/probe.bin
