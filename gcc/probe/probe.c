@@ -41,6 +41,10 @@ void _vectors() {
     );
 }
 
+void f(int *p) {
+    fmt_int(sys_print, *p);
+}
+
 __attribute__((section(".text._start")))
 void _start() {
     fmt_str(sys_print, "Hello, world!\n");
