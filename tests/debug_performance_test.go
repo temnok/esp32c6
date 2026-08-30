@@ -69,6 +69,14 @@ func TestPerformance(t *testing.T) {
 				}
 			})
 
+			assertPerf("count", 6+2_000, func() {
+				asm.LI(isa.A0, 1_000)
+
+				d.Label("count_start")
+				asm.C_ADDI(isa.A0, -1)
+				asm.BNEZ(isa.A0, d.Offset("count_start"))
+			})
+
 			asm.C_NOP()
 			d.Label("normal_exit")
 			asm.C_EBREAK()

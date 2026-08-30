@@ -14,18 +14,10 @@ void _vectors() {
 
 __attribute__((section(".text._start")))
 void _start() {
-    fmt_str(sys_print, "Hello, world!\n");
-
     sys_exit();
 }
 
 __attribute__ ((interrupt))
 void trap_handler() {
-    fmt_str(sys_print, "\nTrap: mcause=0x");
-    fmt_unsigned_hex(sys_print, csr_read(csr_mcause));
-    fmt_str(sys_print, ", mepc=0x");
-    fmt_unsigned_hex(sys_print, csr_read(csr_mepc));
-    fmt_str(sys_print, "\n");
-
     sys_exit();
 }

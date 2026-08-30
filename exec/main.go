@@ -34,15 +34,14 @@ func main() {
 
 		conn.HartResumeAndWaitForHalt(0)
 
-		//fmt.Printf("dpc: %08X, mepc: %08X, mcause: %08X, mtvec: %08X\n",
-		//	conn.ReadCSR(csr.Dpc), conn.ReadCSR(csr.Mepc), conn.ReadCSR(csr.Mcause), conn.ReadCSR(csr.Mtvec))
-		//fmt.Printf("tp: %08X, sp: %08X\n", conn.ReadGPR(isa.TP), conn.ReadGPR(isa.SP))
-
 		if tp := conn.ReadGPR(isa.TP); tp != 0 {
 			outputLen := tp - 0x4080_0000
 			output = make([]byte, outputLen)
 			conn.ReadMem(0x4080_0000, output)
 		}
+
+		fmt.Printf("dpc: 0x%X, mepc: 0x%X, mcause: 0x%X, sp: 0x%X\n",
+			conn.ReadCSR(csr.Dpc), conn.ReadCSR(csr.Mepc), conn.ReadCSR(csr.Mcause), conn.ReadGPR(isa.SP))
 	})
 
 	fmt.Print(string(output))
