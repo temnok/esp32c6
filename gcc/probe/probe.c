@@ -2,6 +2,7 @@
 #include "../lib/csr/csr.h"
 #include "../lib/fmt/fmt.h"
 #include "../lib/sys/sys.h"
+#include "../lib/fixed/fixed.h"
 
 __attribute__((naked, section(".text._vectors")))
 void _vectors() {
@@ -12,8 +13,12 @@ void _vectors() {
     );
 }
 
+static int tmp;
+
 __attribute__((section(".text._start")))
 void _start() {
+    *(int*)0x40870000 = fixed_mul(*(int*)0x40870004, *(int*)0x40870008);
+
     sys_exit();
 }
 
