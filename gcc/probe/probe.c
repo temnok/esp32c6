@@ -17,7 +17,7 @@ static int tmp;
 
 __attribute__((section(".text._start")))
 void _start() {
-    *(int*)0x40870000 = fixed_mul(*(int*)0x40870004, *(int*)0x40870008);
+    fmt_str(sys_print, "Hello, world\n");
 
     sys_exit();
 }
