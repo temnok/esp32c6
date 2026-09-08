@@ -4,8 +4,9 @@ cd $(dirname "$0")
 
 mkdir -p tmp
 
+# -fPIE -static-pie -static \
 riscv64-unknown-elf-gcc -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
-  -fPIE -static-pie \
+  -fno-builtin-memset -fno-builtin-memcpy -fno-tree-loop-distribute-patterns -fno-common \
   -fno-ident \
   -Oz -g \
   -T probe.ld \
@@ -15,10 +16,10 @@ riscv64-unknown-elf-gcc -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
 
 riscv64-unknown-elf-objdump \
   --disassemble --line-numbers --source \
-  --full-contents --section=.text --section=.rodata \
+  --full-contents --section=.text --section=.rodata --section=.data \
   tmp/probe.elf > tmp/probe.elf.S
 
 riscv64-unknown-elf-objcopy \
   --output-target=binary \
-  --only-section=.text* --only-section=.rodata* --only-section=.rodata* \
+  --only-section=.text* --only-section=.rodata* --only-section=.rodata* --only-section=.data* \
   tmp/probe.elf tmp/probe.bin

@@ -9,18 +9,42 @@ SECTIONS
 {
     .text :
     {
+        _vectors = .;
         KEEP(*(.text._vectors))
+
+        ASSERT(. - _vectors == 0x80, "error: vector table size must be 0x80");
         KEEP(*(.text._start))
-        *(.text*)
+        *(.text .text.*)
     } > RAM
 
     .rodata :
     {
-        *(.rodata*)
+        . = ALIGN(4);
+        *(.srodata .srodata.*)
+
+        . = ALIGN(4);
+        *(.rodata .rodata.*)
     } > RAM
 
     .data :
     {
-        *(.data*)
+        . = ALIGN(4);
+        *(.sdata .sdata.*)
+
+        . = ALIGN(4);
+        *(.data .data.*)
+    } > RAM
+
+    .bss :
+    {
+        . = ALIGN(4);
+        PROVIDE(_bss_start = .);
+        *(.sbss .sbss.*)
+
+        . = ALIGN(4);
+        *(.bss .bss.*)
+
+        . = ALIGN(4);
+        PROVIDE(_bss_end = .);
     } > RAM
 }

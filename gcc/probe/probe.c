@@ -12,11 +12,19 @@ void _vectors() {
     );
 }
 
-static int tmp;
+extern int _bss_start, _bss_end;
+
+int static_var = 12345;
 
 __attribute__((section(".text._start")))
 void _start() {
-    fmt_str(sys_print, "Hello, world\n");
+    for (int *p = &_bss_start; p < &_bss_end; p++) {
+        *p = 0;
+    }
+
+    fmt_str(sys_print, "Hello, world: ");
+    fmt_int(sys_print, static_var);
+    fmt_str(sys_print, "\n");
 
     sys_exit();
 }
