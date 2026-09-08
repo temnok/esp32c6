@@ -5,6 +5,7 @@ cd $(dirname "$0")
 mkdir -p tmp
 
 riscv64-unknown-elf-gcc -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
+  -fPIE -static-pie \
   -fno-ident \
   -Oz -g \
   -T probe.ld \

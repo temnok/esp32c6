@@ -3,7 +3,6 @@ package debug
 import (
 	"fmt"
 	"github.com/temnok/esp32c6/dmi"
-	"github.com/temnok/esp32c6/isa/csr"
 )
 
 type Conn struct {
@@ -81,10 +80,6 @@ func (c *Conn) checkAndWaitCommand() {
 	if cmderr := a >> dmi.AbstractcsCmderr & 7; cmderr != dmi.CmderrNone {
 		panic(fmt.Errorf("abstract command error: %v", cmderr))
 	}
-}
-
-func (c *Conn) ReadPC() int {
-	return c.ReadCSR(csr.Dpc)
 }
 
 func (c *Conn) ReadGPR(i int) int {

@@ -43,7 +43,7 @@ func TestRegistersAfterReset(t *testing.T) {
 		assert.Equal(t, 0x2, conn.ReadCSR(csr.Mimpid))
 		assert.Equal(t, 0, conn.ReadCSR(csr.Mhartid))
 
-		assert.Equal(t, 0x4000_0000, conn.ReadPC())
+		assert.Equal(t, 0x4000_0000, conn.ReadCSR(csr.Dpc))
 
 		for i := range 32 {
 			assert.Equal(t, 0, conn.ReadGPR(i))

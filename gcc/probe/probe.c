@@ -2,7 +2,6 @@
 #include "../lib/csr/csr.h"
 #include "../lib/fmt/fmt.h"
 #include "../lib/sys/sys.h"
-#include "../lib/fixed/fixed.h"
 
 __attribute__((naked, section(".text._vectors")))
 void _vectors() {
