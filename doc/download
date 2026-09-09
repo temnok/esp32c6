@@ -12,6 +12,12 @@ wget -nc -O "tmp/c6/ESP32-C6 Technical Reference Manual.pdf" \
 wget -nc -O "tmp/c6/ESP32-C6 Datasheet.pdf" \
   https://documentation.espressif.com/esp32-c6_datasheet_en.pdf
 
+wget -nc -O "tmp/c6/ESP32-C6 Super Mini Board Pinout.jpg" \
+  https://www.tinytronics.nl/image/cache/catalog/products_2026/esp32-c6-supermini-development-board-pinout-1500x1500w.jpg
+
+wget -nc -O "tmp/c6/ESP32-C6 Super Mini Board Schematic.png" \
+  https://esp32lab.com/wp-content/uploads/esp32-c6mini-sch.png
+
 wget -nc -O "tmp/jtag/JTAG TAP State Machine.png" \
   https://www.allaboutcircuits.com/uploads/articles/jtag-part-ii-the-test-access-port-state-machine-SG-aac-image2_2.png
 
