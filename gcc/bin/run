@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -e
+#cd $(dirname "$0")
+
+../bin/build
+go run ../../exec/main.go tmp/output.bin

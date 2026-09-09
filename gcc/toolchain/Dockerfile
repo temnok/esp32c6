@@ -40,19 +40,12 @@ RUN apt update && \
         zlib1g-dev \
     ;
 
-
-RUN groupadd -r user && \
-    useradd -m -r -g user user
-
-USER user
-WORKDIR /home/user
-
 RUN git clone --depth 1 --single-branch --branch 2026.08.27 \
     https://github.com/riscv/riscv-gnu-toolchain toolchain-source && \
     cd toolchain-source && \
-    ./configure --prefix=/home/user/toolchain --with-arch=rv32imac_zicsr --with-abi=ilp32 && \
+    ./configure --prefix=/opt/riscv --with-arch=rv32imac_zicsr --with-abi=ilp32 && \
     make --jobs=$(nproc) && \
     cd .. && \
     rm -rf toolchain-source
 
-ENV PATH="$PATH:/home/user/toolchain/bin"
+ENV PATH="$PATH:/opt/riscv/bin"

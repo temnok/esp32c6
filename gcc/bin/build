@@ -1,25 +1,34 @@
 #!/usr/bin/env sh
 set -e
-cd $(dirname "$0")
+#cd $(dirname "$0")
 
 mkdir -p tmp
 
-# -fPIE -static-pie -static \
-riscv64-unknown-elf-gcc -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
+#  -fPIE -static-pie \
+
+docker run -ti --rm \
+  -u $(id -u):$(id -g) \
+  -v $(pwd)/..:/work \
+  -w /work/$(basename "$PWD") \
+  rv32-toolchain \
+  bash -c "
+
+riscv32-unknown-elf-gcc -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
   -fno-builtin-memset -fno-builtin-memcpy -fno-tree-loop-distribute-patterns -fno-common \
   -fno-ident \
   -Oz -g \
-  -T probe.ld \
+  -T ../bin/linker.ld \
   -ffunction-sections -fdata-sections \
   -Wl,--gc-sections,--no-warn-rwx-segments \
-  -o tmp/probe.elf *.c
+  -o tmp/output.elf *.c &&
 
-riscv64-unknown-elf-objdump \
+riscv32-unknown-elf-objdump \
   --disassemble --line-numbers --source \
   --full-contents --section=.text --section=.rodata --section=.data \
-  tmp/probe.elf > tmp/probe.elf.S
+  tmp/output.elf > tmp/output.elf.S &&
 
-riscv64-unknown-elf-objcopy \
+riscv32-unknown-elf-objcopy \
   --output-target=binary \
   --only-section=.text* --only-section=.rodata* --only-section=.rodata* --only-section=.data* \
-  tmp/probe.elf tmp/probe.bin
+  tmp/output.elf tmp/output.bin
+"

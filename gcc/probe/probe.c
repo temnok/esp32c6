@@ -14,7 +14,7 @@ void _vectors() {
 
 extern int _bss_start, _bss_end;
 
-int static_var = 12345;
+int static_var;
 
 __attribute__((section(".text._start")))
 void _start() {
