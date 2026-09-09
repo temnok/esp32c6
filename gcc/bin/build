@@ -20,6 +20,7 @@ riscv32-unknown-elf-gcc -march=rv32imac_zicsr -mabi=ilp32 -nostdlib \
   -T ../bin/linker.ld \
   -ffunction-sections -fdata-sections \
   -Wl,--gc-sections,--no-warn-rwx-segments \
+  -flto -fomit-frame-pointer \
   -o tmp/output.elf *.c &&
 
 riscv32-unknown-elf-objdump \

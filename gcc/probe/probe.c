@@ -3,7 +3,7 @@
 #include "../lib/fmt/fmt.h"
 #include "../lib/sys/sys.h"
 
-__attribute__((naked, section(".text._vectors")))
+__attribute__((section(".text._vectors"), naked, used, retain))
 void _vectors() {
     __asm__ volatile (
         ".rept 32\n"
@@ -12,12 +12,11 @@ void _vectors() {
     );
 }
 
-extern int _bss_start, _bss_end;
-
 int static_var;
 
 __attribute__((section(".text._start")))
 void _start() {
+    extern int _bss_start, _bss_end;
     for (int *p = &_bss_start; p < &_bss_end; p++) {
         *p = 0;
     }
@@ -29,7 +28,7 @@ void _start() {
     sys_exit();
 }
 
-__attribute__ ((interrupt))
+__attribute__ ((interrupt, used, retain))
 void trap_handler() {
     sys_exit();
 }

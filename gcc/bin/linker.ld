@@ -9,10 +9,9 @@ SECTIONS
 {
     .text :
     {
-        _vectors = .;
         KEEP(*(.text._vectors))
 
-        ASSERT(. - _vectors == 0x80, "error: vector table size must be 0x80");
+        ASSERT(. == 0x80, "error: vector table size must be 0x80");
         KEEP(*(.text._start))
         *(.text .text.*)
     } > RAM
