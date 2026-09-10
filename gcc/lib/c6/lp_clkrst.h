@@ -1,0 +1,5 @@
+#pragma once
+
+const int
+    LP_CLKRST_BASE = 0x600B0400,
+    LP_CLKRST_RESET_CAUSE_REG = LP_CLKRST_BASE + 0x0010;

@@ -36,6 +36,8 @@ func main() {
 		conn.WriteCSR(csr.Mtvec, appAddr)
 		conn.WriteCSR(csr.Dpc, appEntry)
 		conn.WriteCSR(csr.Dcsr, 1<<csr.DcsrEbreakm|1<<csr.DcsrEbreaku|3<<csr.DcsrPrv)
+		conn.WriteCSR(csr.Mpcer, 1)
+		conn.WriteWord(0x60008000+0x0048, 0) // Disable MWDT0 reset in TIMG_WDTCONFIG0_REG
 
 		conn.HartResumeAndWaitForHalt(0)
 
@@ -47,7 +49,10 @@ func main() {
 			fmt.Print(string(output))
 		}
 
-		fmt.Printf("dpc: 0x%X, mepc: 0x%X, mcause: 0x%X, sp: 0x%X\n",
-			conn.ReadCSR(csr.Dpc), conn.ReadCSR(csr.Mepc), conn.ReadCSR(csr.Mcause), conn.ReadGPR(isa.SP))
+		resetCause := conn.ReadWord(0x600B0400+0x0010) & 0x1F // LP_CLKRST_RESET_CAUSE_REG
+
+		fmt.Printf("dpc: 0x%X, mepc: 0x%X, mcause: 0x%X, sp: 0x%X, reset_cause: 0x%X\n",
+			conn.ReadCSR(csr.Dpc), conn.ReadCSR(csr.Mepc), conn.ReadCSR(csr.Mcause), conn.ReadGPR(isa.SP),
+			resetCause)
 	})
 }

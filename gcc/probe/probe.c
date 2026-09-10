@@ -1,4 +1,7 @@
 
+#include "../lib/c6/gpio.h"
+#include "../lib/c6/rtc_wdt.h"
+#include "../lib/c6/timg.h"
 #include "../lib/csr/csr.h"
 #include "../lib/fmt/fmt.h"
 #include "../lib/sys/sys.h"
@@ -12,23 +15,25 @@ void _vectors() {
     );
 }
 
-const unsigned GPIO_MATRIX_BASE_ADDR = 0x60091000;
-
-unsigned
-    * const GPIO_OUT_W1TS_REG = (unsigned*)(GPIO_MATRIX_BASE_ADDR + 0x0008),
-    * const GPIO_ENABLE_W1TS_REG = (unsigned*)(GPIO_MATRIX_BASE_ADDR + 0x0024),
-    * const GPIO_FUNC_OUT_SEL_CFG_REG = (unsigned*)(GPIO_MATRIX_BASE_ADDR + 0x0554);
+void sleep_cycles(unsigned cycles) {
+    unsigned start = csr_read(CSR_MPCCR);
+    while ((unsigned)csr_read(CSR_MPCCR) - start < cycles);
+}
 
 __attribute__((section(".text._start")))
 void _start() {
     extern int _bss_start, _bss_end;
     for (int *p = &_bss_start; p < &_bss_end; p++) *p = 0;
 
-//    fmt_str(sys_print, "Reg value: ");
-//    fmt_unsigned_hex(sys_print, GPIO_FUNC_OUT_SEL_CFG_REG[15]);
-//    fmt_str(sys_print, "\n");
-    *GPIO_ENABLE_W1TS_REG = 1<<15;
-    *GPIO_OUT_W1TS_REG = 1<<15;
+    *(int*)GPIO_ENABLE_W1TS_REG = 1<<15;
+
+    for (auto i = 0; i < 3; i++) {
+        *(int*)GPIO_OUT_W1TS_REG = 1<<15;
+        sleep_cycles(80'000'000);
+
+        *(int*)GPIO_OUT_W1TC_REG = 1<<15;
+        sleep_cycles(80'000'000);
+    }
 
     sys_exit();
 }

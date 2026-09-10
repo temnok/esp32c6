@@ -158,6 +158,12 @@ func (c *Conn) ReadMem(addr int, mem []byte) {
 	}
 }
 
+func (c *Conn) ReadWord(addr int) int {
+	buf := []byte{0, 0, 0, 0}
+	c.ReadMem(addr, buf)
+	return int(buf[3])<<24 | int(buf[2])<<16 | int(buf[1])<<8 | int(buf[0])
+}
+
 func (c *Conn) WriteMem(addr int, mem []byte) {
 	c.dmi.Write(dmi.Sbcs, 2<<dmi.SbcsSbaccess|
 		1<<dmi.SbcsSbautoincrement)
@@ -186,4 +192,9 @@ func (c *Conn) WriteMem(addr int, mem []byte) {
 		c.dmi.Write(dmi.Sbdata0, val)
 		c.waitSbcs()
 	}
+}
+
+func (c *Conn) WriteWord(addr, val int) {
+	buf := []byte{byte(val), byte(val >> 8), byte(val >> 16), byte(val >> 24)}
+	c.WriteMem(addr, buf)
 }
