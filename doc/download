@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 cd $(dirname "$0")
 
-mkdir -p tmp/c6 tmp/jtag tmp/rv
+mkdir -p tmp/c6 tmp/jtag tmp/led tmp/rv
 
 wget -nc -O "tmp/c6/ESP32-C6-Touch-LCD-1.47 Schematic.pdf" \
   https://files.waveshare.com/wiki/ESP32-C6-Touch-LCD-1.47/ESP32-C6-Touch-LCD-1.47-Schematic.pdf
@@ -18,6 +18,9 @@ wget -nc -O "tmp/c6/ESP32-C6 Super Mini Board Pinout.jpg" \
 wget -nc -O "tmp/c6/ESP32-C6 Super Mini Board Schematic.png" \
   https://esp32lab.com/wp-content/uploads/esp32-c6mini-sch.png
 
+wget -nc -O "tmp/led/WS2812B-2020 Datasheet.pdf" \
+  https://files.waveshare.com/wiki/common/WS2812_0807.pdf
+
 wget -nc -O "tmp/jtag/JTAG TAP State Machine.png" \
   https://www.allaboutcircuits.com/uploads/articles/jtag-part-ii-the-test-access-port-state-machine-SG-aac-image2_2.png
 
@@ -26,3 +29,5 @@ wget -nc -O "tmp/rv/RISC-V Reference Card.pdf" \
 
 wget -nc -O "tmp/rv/RISC-V Debug Specification.pdf" \
   https://github.com/riscv/riscv-debug-spec/releases/download/1.0/riscv-debug-specification.pdf
+
+find tmp -type f -print0 | sort -z | xargs -0 sha256sum > checksums.txt

@@ -8,6 +8,7 @@ import (
 	"github.com/temnok/esp32c6/isa/csr"
 	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -40,7 +41,9 @@ func main() {
 		conn.WriteWord(0x60008000+0x0048, 0) // Disable MWDT0 reset in TIMG0_WDTCONFIG0_REG
 		conn.WriteWord(0x60009000+0x0048, 0) // Disable MWDT1 reset in TIMG1_WDTCONFIG0_REG
 
+		start := time.Now()
 		conn.HartResumeAndWaitForHalt(0)
+		duration := time.Since(start)
 
 		if tp := conn.ReadGPR(isa.TP); tp != 0 {
 			outputLen := tp - ramAddr
@@ -52,8 +55,8 @@ func main() {
 
 		resetCause := conn.ReadWord(0x600B0400+0x0010) & 0x1F // LP_CLKRST_RESET_CAUSE_REG
 
-		fmt.Printf("dpc: 0x%X, mepc: 0x%X, mcause: 0x%X, sp: 0x%X, reset_cause: 0x%X\n",
+		fmt.Printf("dpc: 0x%X, mepc: 0x%X, mcause: 0x%X, sp: 0x%X, reset_cause: 0x%X, time: %.6fs\n",
 			conn.ReadCSR(csr.Dpc), conn.ReadCSR(csr.Mepc), conn.ReadCSR(csr.Mcause), conn.ReadGPR(isa.SP),
-			resetCause)
+			resetCause, duration.Seconds())
 	})
 }

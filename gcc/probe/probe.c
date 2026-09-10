@@ -1,6 +1,6 @@
 
-#include "../lib/c6/c6.h"
 #include "../lib/csr/csr.h"
+#include "../lib/dev/dev.h"
 #include "../lib/fmt/fmt.h"
 #include "../lib/sys/sys.h"
 

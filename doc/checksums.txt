@@ -1,0 +1,9 @@
+372a5b42b2900c83ef4309149c8835e9ae2d1be19244995bf2fb83af4dc5edf1  tmp/c6/ESP32-C6 Datasheet.pdf
+695759a5891d9a2c5c1a4b75796b89793a6a70cfa5ac1d56e45ff663e9313f48  tmp/c6/ESP32-C6 Super Mini Board Pinout.jpg
+c0c2d18f5f2c6b860bd8e5d4d5286a0b4eb0fe7509e3ce22b94e0b325da68d73  tmp/c6/ESP32-C6 Super Mini Board Schematic.png
+e08d5b61ebcfa2a78f9735e3f721817cb1dc2df9cf05096d2f0399eaba9f1734  tmp/c6/ESP32-C6 Technical Reference Manual.pdf
+b679d1a6198ece26992c72a1b93a97ed2db6cc5f0066d041cb49150c5759c480  tmp/c6/ESP32-C6-Touch-LCD-1.47 Schematic.pdf
+e26516e58dfdfb4346f24de02779486a4a787e214db9a35ae2542550a67dc91c  tmp/jtag/JTAG TAP State Machine.png
+17a47fb2204cc6284588ff897f82ef29395575c0d914e719bcbc230bfb8ea14d  tmp/led/WS2812B-2020 Datasheet.pdf
+ce2787b25233a6109c9bc767b2bc497798148b721390f72fb9b48ff0ed986fc8  tmp/rv/RISC-V Debug Specification.pdf
+401f90fa557cf5f501e761eb0ec17cce98eac798f65cc85acf811113dafe7aea  tmp/rv/RISC-V Reference Card.pdf
