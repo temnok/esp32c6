@@ -1,7 +1,5 @@
 
-#include "../lib/c6/gpio.h"
-#include "../lib/c6/rtc_wdt.h"
-#include "../lib/c6/timg.h"
+#include "../lib/c6/c6.h"
 #include "../lib/csr/csr.h"
 #include "../lib/fmt/fmt.h"
 #include "../lib/sys/sys.h"
@@ -25,13 +23,18 @@ void _start() {
     extern int _bss_start, _bss_end;
     for (int *p = &_bss_start; p < &_bss_end; p++) *p = 0;
 
-    *(int*)GPIO_ENABLE_W1TS_REG = 1<<15;
+    ((volatile int*)GPIO_FUNC_OUT_SEL_CFG_REG)[15] = 0x80;
+    *(volatile int*)GPIO_ENABLE_W1TS_REG = 1<<15;
+
+//    fmt_str(sys_print, "IO_MUX_GPIO_REG: 0x");
+//    fmt_unsigned_hex(sys_print, ((unsigned*)IO_MUX_GPIO_REG)[15]);
+//    fmt_str(sys_print, "\n");
 
     for (auto i = 0; i < 3; i++) {
-        *(int*)GPIO_OUT_W1TS_REG = 1<<15;
+        *(volatile int*)GPIO_OUT_W1TS_REG = 1<<15;
         sleep_cycles(80'000'000);
 
-        *(int*)GPIO_OUT_W1TC_REG = 1<<15;
+        *(volatile int*)GPIO_OUT_W1TC_REG = 1<<15;
         sleep_cycles(80'000'000);
     }
 

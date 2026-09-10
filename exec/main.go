@@ -37,7 +37,8 @@ func main() {
 		conn.WriteCSR(csr.Dpc, appEntry)
 		conn.WriteCSR(csr.Dcsr, 1<<csr.DcsrEbreakm|1<<csr.DcsrEbreaku|3<<csr.DcsrPrv)
 		conn.WriteCSR(csr.Mpcer, 1)
-		conn.WriteWord(0x60008000+0x0048, 0) // Disable MWDT0 reset in TIMG_WDTCONFIG0_REG
+		conn.WriteWord(0x60008000+0x0048, 0) // Disable MWDT0 reset in TIMG0_WDTCONFIG0_REG
+		conn.WriteWord(0x60009000+0x0048, 0) // Disable MWDT1 reset in TIMG1_WDTCONFIG0_REG
 
 		conn.HartResumeAndWaitForHalt(0)
 
