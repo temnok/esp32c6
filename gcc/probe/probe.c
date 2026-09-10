@@ -18,25 +18,29 @@ void sleep_cycles(unsigned cycles) {
     while ((unsigned)csr_read(CSR_MPCCR) - start < cycles);
 }
 
+void ws2812b_write(int pin, unsigned char r, unsigned char g, unsigned char b) {
+    int rgb = g<<16 | r<<8 | b;
+    for (int i = 23; i >= 0; i--) {
+        int bit = (rgb>>i)&1;
+
+        *(volatile int*)GPIO_OUT_W1TS_REG = 1<<pin;
+        sleep_cycles(bit? 100 : 30);
+
+        *(volatile int*)GPIO_OUT_W1TC_REG = 1<<pin;
+        sleep_cycles(bit? 100 : 170);
+    }
+}
+
 __attribute__((section(".text._start")))
 void _start() {
     extern int _bss_start, _bss_end;
     for (int *p = &_bss_start; p < &_bss_end; p++) *p = 0;
 
-    ((volatile int*)GPIO_FUNC_OUT_SEL_CFG_REG)[15] = 0x80;
-    *(volatile int*)GPIO_ENABLE_W1TS_REG = 1<<15;
+    ((volatile int*)GPIO_FUNC_OUT_SEL_CFG_REG)[8] = 0x80;
+    *(volatile int*)GPIO_ENABLE_W1TS_REG = 1<<8;
+    ws2812b_write(8, 0x00, 0x02, 0x00);
 
-//    fmt_str(sys_print, "IO_MUX_GPIO_REG: 0x");
-//    fmt_unsigned_hex(sys_print, ((unsigned*)IO_MUX_GPIO_REG)[15]);
-//    fmt_str(sys_print, "\n");
-
-    for (auto i = 0; i < 3; i++) {
-        *(volatile int*)GPIO_OUT_W1TS_REG = 1<<15;
-        sleep_cycles(80'000'000);
-
-        *(volatile int*)GPIO_OUT_W1TC_REG = 1<<15;
-        sleep_cycles(80'000'000);
-    }
+    sleep_cycles(1*160'000'000);
 
     sys_exit();
 }
