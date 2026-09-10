@@ -20,14 +20,32 @@ void sleep_cycles(unsigned cycles) {
 
 void ws2812b_write(int pin, unsigned char r, unsigned char g, unsigned char b) {
     int rgb = g<<16 | r<<8 | b;
+
     for (int i = 23; i >= 0; i--) {
         int bit = (rgb>>i)&1;
 
-        *(volatile int*)GPIO_OUT_W1TS_REG = 1<<pin;
-        sleep_cycles(bit? 100 : 30);
+        *(volatile int*)GPIO_OUT_REG = 1<<pin;
+        sleep_cycles(bit? 75 : 25);
 
-        *(volatile int*)GPIO_OUT_W1TC_REG = 1<<pin;
-        sleep_cycles(bit? 100 : 170);
+        *(volatile int*)GPIO_OUT_REG = 0<<pin;
+        sleep_cycles(bit? 75 : 125);
+    }
+}
+
+void rainbow(int pin, int pause) {
+    for (int i = 0; i < 255; i++) {
+        ws2812b_write(pin, 255-i, i, 0);
+        sleep_cycles(pause);
+    }
+
+    for (int i = 0; i < 255; i++) {
+        ws2812b_write(pin, 0, 255-i, i);
+        sleep_cycles(pause);
+    }
+
+    for (int i = 0; i < 255; i++) {
+        ws2812b_write(pin, i, 0, 255-i);
+        sleep_cycles(pause);
     }
 }
 
@@ -38,9 +56,10 @@ void _start() {
 
     ((volatile int*)GPIO_FUNC_OUT_SEL_CFG_REG)[8] = 0x80;
     *(volatile int*)GPIO_ENABLE_W1TS_REG = 1<<8;
-    ws2812b_write(8, 0x00, 0x02, 0x00);
 
-    sleep_cycles(1*160'000'000);
+    for (int i = 0; i < 1; i++) {
+        rainbow(8, 1'600'000);
+    }
 
     sys_exit();
 }
