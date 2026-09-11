@@ -3,5 +3,5 @@ set -e
 cd $(dirname "$0")
 
 docker build \
-    --tag rv32-toolchain \
+    --tag riscv-gnu-toolchain \
     $(pwd)

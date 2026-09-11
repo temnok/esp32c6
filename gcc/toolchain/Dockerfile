@@ -43,9 +43,30 @@ RUN apt update && \
 RUN git clone --depth 1 --single-branch --branch 2026.08.27 \
     https://github.com/riscv/riscv-gnu-toolchain toolchain-source && \
     cd toolchain-source && \
-    ./configure --prefix=/opt/riscv --with-arch=rv32imac_zicsr --with-abi=ilp32 && \
+    ./configure --prefix=/opt/riscv --enable-multilib && \
     make --jobs=$(nproc) && \
     cd .. && \
     rm -rf toolchain-source
 
 ENV PATH="$PATH:/opt/riscv/bin"
+
+RUN apt update && \
+    apt install -y \
+        binutils-dev \
+        build-essential \
+        g++-multilib \
+        gcc-multilib \
+        genromfs \
+        gettext \
+        kconfig-frontends \
+        libexpat1-dev \
+        libisl-dev \
+        libncurses5-dev \
+        libncursesw5-dev \
+        picocom \
+        pkg-config \
+        u-boot-tools \
+        util-linux \
+        xxd
+
+RUN pip install esptool --break-system-packages
