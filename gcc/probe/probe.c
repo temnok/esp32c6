@@ -54,22 +54,22 @@ void _start() {
     extern int _bss_start, _bss_end;
     for (int *p = &_bss_start; p < &_bss_end; p++) *p = 0;
 
-//    ((volatile int*)GPIO_FUNC_OUT_SEL_CFG_REG)[8] = 0x80;
-//    *(volatile int*)GPIO_ENABLE_W1TS_REG = 1<<8;
-//    for (int i = 0; i < 1; i++) {
-//        rainbow(8, 1'600'000);
-//    }
-
-    ((volatile int*)GPIO_FUNC_OUT_SEL_CFG_REG)[15] = 0x80;
-    *(volatile int*)GPIO_ENABLE_W1TS_REG = 1<<15;
-
+    ((volatile int*)GPIO_FUNC_OUT_SEL_CFG_REG)[8] = 0x80;
+    *(volatile int*)GPIO_ENABLE_W1TS_REG = 1<<8;
     for (int i = 0; i < 3; i++) {
-        *(volatile int*)GPIO_OUT_REG = 1<<15;
-        sleep_cycles(80'000'000);
-
-        *(volatile int*)GPIO_OUT_REG = 0<<15;
-        sleep_cycles(80'000'000);
+        rainbow(8, 1'600'000);
     }
+
+//    ((volatile int*)GPIO_FUNC_OUT_SEL_CFG_REG)[15] = 0x80;
+//    *(volatile int*)GPIO_ENABLE_W1TS_REG = 1<<15;
+//
+//    for (int i = 0; i < 3; i++) {
+//        *(volatile int*)GPIO_OUT_REG = 1<<15;
+//        sleep_cycles(80'000'000);
+//
+//        *(volatile int*)GPIO_OUT_REG = 0<<15;
+//        sleep_cycles(80'000'000);
+//    }
 
     sys_exit();
 }
