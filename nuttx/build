@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+set -e
+
+# https://nuttx.apache.org/docs/latest/platforms/risc-v/esp32c6/boards/esp32c6-xiao/index.html#wifi
+
+cd ~/github.com/apache
+
+cd nuttx && git checkout nuttx-13.0.0 && cd ..
+cd nuttx-apps && git checkout nuttx-13.0.0 && cd ..
+
+docker run -ti --rm \
+    --device /dev/ttyACM0 \
+    -e CCACHE_DIR=/work/.ccache \
+    -u $(id -u):$(id -g) \
+    -v $(pwd):/work \
+    -w /work/nuttx \
+    ghcr.io/apache/nuttx/apache-nuttx-ci-linux bash -c "
+
+make distclean &&
+./tools/configure.sh esp32c6-xiao:wifi &&
+make V=1 &&
+make flash ESPTOOL_PORT=/dev/ttyACM0 ESPTOOL_BINDIR=./
+
+"
